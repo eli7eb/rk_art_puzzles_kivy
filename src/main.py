@@ -5,7 +5,10 @@ import time
 import random
 pygame.font.init()
 from pygame.locals import *
-from src.game_states.main_menu import MainMenu
+
+from src.game_views.text_view import TextView
+from src.game_views.main_menu_view import MenuView
+from src.game_views.quit_view import QuitView
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -21,6 +24,59 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
 # Background
 BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (WIDTH, HEIGHT))
+
+titleFont = pygame.font.SysFont("comicsansmsttf", 60)
+menuFont = pygame.font.SysFont("comicsansmsttf", 30)
+menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
+
+BACKGROUND_COLOR = pygame.Color(0, 0, 100)
+TEXT_COLOR = pygame.Color(255, 255, 255)
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 800
+HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
+HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
+
+VIEW_STATE_SPLASH = 0
+VIEW_STATE_MENU = 1
+VIEW_STATE_GAME_A = 2
+VIEW_STATE_GAME_B = 3
+VIEW_STATE_OPTIONS = 4
+VIEW_STATE_QUITTING = 5
+VIEW_STATE_QUIT = 6
+
+screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+
+views = { \
+    VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
+    VIEW_STATE_GAME_A: TextView(screen, "Game A screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT,BACKGROUND_COLOR),
+    VIEW_STATE_QUIT: QuitView(screen,BACKGROUND_COLOR)
+}
+
+currentViewId = VIEW_STATE_SPLASH
+currentViewState = views[currentViewId]
+currentViewState.prepare()
+
+print("Showing %s" % currentViewState)
+
+while True:
+
+    currentViewState.handleEvents()
+    currentViewState.render();
+
+    pygame.display.flip()
+    pygame.time.delay(100)
+
+    nextViewId = currentViewState.transition()
+    if nextViewId:
+        print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
+        currentViewId = nextViewId
+        currentViewState = views[currentViewId]
+        currentViewState.prepare()
+
 
 def main():
     run = True
@@ -99,5 +155,24 @@ def main():
             pygame.display.update()
             mainClock.tick(60)
 
-game_main_menu = MainMenu(WIN,WIDTH,HEIGHT)
-game_main_menu.draw()
+
+currentViewId = VIEW_STATE_SPLASH
+currentViewState = views[currentViewId]
+currentViewState.prepare()
+
+print("Showing %s" % currentViewState)
+
+while True:
+
+    currentViewState.handleEvents()
+    currentViewState.render();
+
+    pygame.display.flip()
+    pygame.time.delay(100)
+
+    nextViewId = currentViewState.transition()
+    if nextViewId:
+        print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
+        currentViewId = nextViewId
+        currentViewState = views[currentViewId]
+        currentViewState.prepare()
