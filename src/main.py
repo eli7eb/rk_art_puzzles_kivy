@@ -9,6 +9,7 @@ from pygame.locals import *
 from src.game_views.text_view import TextView
 from src.game_views.main_menu_view import MenuView
 from src.game_views.quit_view import QuitView
+from src.game_views.game_view import GameView
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -49,7 +50,7 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
-    VIEW_STATE_GAME_A: TextView(screen, "Game A screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_GAME_A: GameView(screen, BACKGROUND_COLOR),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT,BACKGROUND_COLOR),
@@ -73,9 +74,14 @@ while True:
     nextViewId = currentViewState.transition()
     if nextViewId:
         print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
+        if (currentViewId == VIEW_STATE_MENU):
+            mood_str = currentViewState.textinput.get_text()
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
-        currentViewState.prepare()
+        if (currentViewId == VIEW_STATE_GAME_A):
+            currentViewState.prepare(mood_str)
+        else:
+            currentViewState.prepare()
 
 
 def main():
