@@ -1,5 +1,5 @@
 import pygame
-import os
+
 import sys
 import time
 import random
@@ -24,7 +24,7 @@ WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
 # Background
-BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (WIDTH, HEIGHT))
+# BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (WIDTH, HEIGHT))
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
@@ -46,11 +46,12 @@ VIEW_STATE_QUITTING = 5
 VIEW_STATE_QUIT = 6
 
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+mood_str = ""
 
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
-    VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR,BG),
-    VIEW_STATE_GAME_A: GameView(screen, BACKGROUND_COLOR),
+    VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
+    VIEW_STATE_GAME_A: GameView(screen, BACKGROUND_COLOR,mood_str),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT,BACKGROUND_COLOR),
@@ -96,7 +97,7 @@ def main():
     clock = pygame.time.Clock()
 
     def redraw_window():
-        WIN.blit(BG, (0, 0))
+        # WIN.blit(BG, (0, 0))
         # draw text
         lives_label = main_font.render(f"Lives: {lives}", 1, (255, 255, 255))
         level_label = main_font.render(f"Level: {level}", 1, (255, 255, 255))

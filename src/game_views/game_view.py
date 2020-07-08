@@ -17,6 +17,10 @@ SCREEN_HEIGHT = 800
 HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
+SCREEN_SPACER_SIZE = 5
+# how many spacers vertical and horizontal
+SCREEN_SPACER_NUMBER_VER = 3
+SCREEN_SPACER_NUMBER_HOR = 2
 
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
@@ -29,21 +33,47 @@ class GameView(View):
     centerX = HALF_SCREEN_WIDTH
     centerY = HALF_SCREEN_HEIGHT
 
-    def __init__(self, screen,bg_color):
+
+
+    def __init__(self, screen,bg_color,mood_str):
         self.bg_color = bg_color
-        View.__init__(self, screen,self.bg_color)
-
-    def prepare(self, mood_str):
-        self.transitionToState = None
+        self.screen = screen
         self.mood_str = mood_str
+        self.image = self.getLoadedImage()
 
+
+    def getLoadedImage(self):
         searchArtObj = SearchArt(self.mood_str)
         art_dict = searchArtObj.getImageList()
         getArtWorkObj = GetArtTiles(art_dict)
         art_tiles_obj = getArtWorkObj.getArtImage()
         art_image = GetArtImage(art_tiles_obj)
-        full_image = art_image.getBitmapFromTiles()
-        return full_image
+        bitmap_art_image = art_image.getBitmapFromTiles()
+        return bitmap_art_image
+
+    # tile needs to fit in the screen 5 times in the horizontal directions with overheads
+    def calcualteTileSize(self):
+        self.tile_size = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR*SCREEN_SPACER_SIZE) / 5
+        print("tile size " + str(self.tile_size))
+
+    def calculateGridSize(self):
+        self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR*SCREEN_SPACER_SIZE
+        self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER*SCREEN_SPACER_SIZE
+
+
+
+    def prepare(self, mood_str):
+        self.transitionToState = None
+        self.mood_str = mood_str
+
+        self.top_drag_grid_x = SCREEN_SPACER_SIZE
+        self.top_drag_grid_y = SCREEN_SPACER_SIZE
+        self.calcualteTileSize()
+        self.calculateGridSize()
+        # display_surface = pygame.display.set_mode((self.grid_width, self.grid_height))
+
+
+
 
 
     def handleEvents(self):
@@ -54,9 +84,9 @@ class GameView(View):
             if event.type == pygame.QUIT:
                 exit()
             # handle the text input first
-            self.textinput.handle_event(event)
-            if event.type == pygame.QUIT:
-                done = True
+            #self.textinput.handle_event(event)
+            #if event.type == pygame.QUIT:
+            #    done = True
 
             # handle drag drop and locations
 
@@ -65,9 +95,12 @@ class GameView(View):
 
 
     def render(self):
-        textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
+        # textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
         self.screen.fill(self.bg_color)
-        self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
+        self.screen.blit(pygame.transform.scale(self.image, (self.grid_width, self.grid_height)),
+                         (self.top_drag_grid_x, self.top_drag_grid_y))
+        print("on screen")
+        # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         pygame.display.flip()
 
     def transition(self):

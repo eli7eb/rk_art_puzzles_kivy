@@ -1,7 +1,7 @@
 # main menu
 # get user mood or not
 # return will lead to load image interstate menu
-
+import os
 import pygame
 from pygame.locals import *
 from src.game_views.views import View
@@ -19,6 +19,8 @@ HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
 
+# Background
+BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
@@ -94,12 +96,11 @@ class MenuView(View):
         MENU_ITEM_QUIT: VIEW_STATE_QUITTING,
     }
 
-    def __init__(self, screen,bg_color,bg_image):
+    def __init__(self, screen,bg_color):
         self.bg_color = bg_color
         self.textinput = InputBox(self.centerX, (self.centerY - 60), 140, 32)
         self.mood_str = ''
         self.mood_str_1 = ''
-        self.bg_image = bg_image
         View.__init__(self, screen,self.bg_color)
 
     def prepare(self):
@@ -158,8 +159,8 @@ class MenuView(View):
 
     def render(self):
         textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
-        self.screen.fill(self.bg_color)
-        self.screen.blit(self.bg_image, (0, 0))
+        # self.screen.fill(self.bg_color)
+        self.screen.blit(BG, (0, 0))
         self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         self.renderMenuItems(self.screen, self.selectedItem)
         self.textinput.update()

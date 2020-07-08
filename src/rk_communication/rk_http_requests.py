@@ -101,5 +101,5 @@ class GetArtImage:
             tmp_x = i['x'] * GLOBAL_TILE_SIZE
             tmp_y = i['y'] * GLOBAL_TILE_SIZE
             print(final_size_image.width)
-            final_size_image.paste(tmp_image,tmp_x,tmp_y)
+            final_size_image.paste(tmp_image,(tmp_x,tmp_y))
         return final_size_image
