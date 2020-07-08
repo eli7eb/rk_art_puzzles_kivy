@@ -94,11 +94,12 @@ class MenuView(View):
         MENU_ITEM_QUIT: VIEW_STATE_QUITTING,
     }
 
-    def __init__(self, screen,bg_color):
+    def __init__(self, screen,bg_color,bg_image):
         self.bg_color = bg_color
         self.textinput = InputBox(self.centerX, (self.centerY - 60), 140, 32)
         self.mood_str = ''
         self.mood_str_1 = ''
+        self.bg_image = bg_image
         View.__init__(self, screen,self.bg_color)
 
     def prepare(self):
@@ -115,13 +116,9 @@ class MenuView(View):
             self.textinput.handle_event(event)
 
             print("textinput '%s'" % self.textinput.text)
-            print("before mood_str '%s'" % self.mood_str)
-            print("before mood_str_1 '%s'" % self.mood_str_1)
+
             self.mood_str = self.textinput.text
             self.mood_str_1 = self.textinput.get_text()
-            print("textinput '%s'" % self.textinput.text)
-            print("mood_str '%s'" % self.mood_str)
-            print("mood_str_1 '%s'" % self.mood_str_1)
             if event.type == pygame.QUIT:
                 done = True
 
@@ -162,6 +159,7 @@ class MenuView(View):
     def render(self):
         textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
         self.screen.fill(self.bg_color)
+        self.screen.blit(self.bg_image, (0, 0))
         self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         self.renderMenuItems(self.screen, self.selectedItem)
         self.textinput.update()

@@ -49,7 +49,7 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
-    VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
+    VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR,BG),
     VIEW_STATE_GAME_A: GameView(screen, BACKGROUND_COLOR),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),

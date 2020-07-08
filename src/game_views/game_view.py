@@ -9,6 +9,8 @@
 import pygame
 from pygame.locals import *
 from src.game_views.views import View
+from src.rk_communication.rk_http_requests import *
+
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -34,6 +36,15 @@ class GameView(View):
     def prepare(self, mood_str):
         self.transitionToState = None
         self.mood_str = mood_str
+
+        searchArtObj = SearchArt(self.mood_str)
+        art_dict = searchArtObj.getImageList()
+        getArtWorkObj = GetArtTiles(art_dict)
+        art_tiles_obj = getArtWorkObj.getArtImage()
+        art_image = GetArtImage(art_tiles_obj)
+        full_image = art_image.getBitmapFromTiles()
+        return full_image
+
 
     def handleEvents(self):
 
