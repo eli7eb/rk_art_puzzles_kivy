@@ -21,10 +21,7 @@ pygame.display.set_caption("Puzzle")
 # load resources
 # constants
 WIDTH, HEIGHT = 750, 750
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
-# Background
-# BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (WIDTH, HEIGHT))
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
@@ -101,8 +98,8 @@ def main():
         # draw text
         lives_label = main_font.render(f"Lives: {lives}", 1, (255, 255, 255))
         level_label = main_font.render(f"Level: {level}", 1, (255, 255, 255))
-        WIN.blit(lives_label, (10, 10))
-        WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
+        screen.blit(lives_label, (10, 10))
+        screen.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
         # draw the tiles
         # draw the input tiles bar
         # draw dashboard
@@ -125,14 +122,14 @@ def main():
         text_obj = font.render(text,1,color)
         text_rect = text_obj.get_rect()
         text_rect.topleft = (x,y)
-        WIN.blit(text_obj,text_rect)
+        screen.blit(text_obj,text_rect)
 
     def game():
         running = True
         while running:
-            WIN.fill((0, 0, 0))
+            screen.fill((0, 0, 0))
 
-            draw_text('game', font, (255, 255, 255), WIN, 20, 20)
+            draw_text('game', font, (255, 255, 255), screen, 20, 20)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -148,9 +145,9 @@ def main():
     def options():
         running = True
         while running:
-            WIN.fill((0, 0, 0))
+            screen.fill((0, 0, 0))
 
-            draw_text('options', font, (255, 255, 255), WIN, 20, 20)
+            draw_text('options', font, (255, 255, 255), screen, 20, 20)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
