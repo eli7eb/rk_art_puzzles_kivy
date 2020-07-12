@@ -159,7 +159,7 @@ class MenuView(View):
 
     def render(self):
         textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
-        # self.screen.fill(self.bg_color)
+
         self.screen.blit(BG, (0, 0))
         self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         self.renderMenuItems(self.screen, self.selectedItem)

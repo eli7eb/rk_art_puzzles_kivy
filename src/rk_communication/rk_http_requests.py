@@ -1,5 +1,6 @@
 import requests
 import json
+import pygame
 from PIL import Image
 from random import randrange
 GLOBAL_TILE_SIZE = 512
@@ -79,9 +80,11 @@ class GetArtTiles:
 
 class GetArtImage:
 
-    def __init__(self, art_obj):
+    def __init__(self, art_obj,width,height):
         self.currentState = None
         self.art_obj = art_obj
+        self.width = width
+        self.height = height
 
     def searchForLevel(self, image_levels):
         for l in image_levels:
@@ -95,11 +98,20 @@ class GetArtImage:
         #   look for z3 or z4
         image_levels = self.art_obj['levels']
         art_level = self.searchForLevel(image_levels)
-        final_size_image = Image.new('RGB', (art_level['width'], art_level['height']))
+        final_image = Image.new('RGB', (art_level['width'], art_level['height']))
         for i in art_level['tiles']:
             tmp_image = Image.open(requests.get(i['url'], stream=True).raw)
             tmp_x = i['x'] * GLOBAL_TILE_SIZE
             tmp_y = i['y'] * GLOBAL_TILE_SIZE
-            print(final_size_image.width)
-            final_size_image.paste(tmp_image,(tmp_x,tmp_y))
-        return final_size_image
+            print ('image w h')
+            print(final_image.width)
+            print(final_image.height)
+            final_image.paste(tmp_image,(tmp_x,tmp_y))
+
+        grid_image = final_image.resize((self.width, self.height),Image.LANCZOS)
+        mode = grid_image.mode
+        size = grid_image.size
+        data = grid_image.tobytes()
+
+        py_image = pygame.image.fromstring(data, size, mode)
+        return py_image

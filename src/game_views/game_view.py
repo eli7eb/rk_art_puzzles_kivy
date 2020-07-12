@@ -32,14 +32,13 @@ class GameView(View):
     titleText = "RK_PUZZLES_GAME"
     centerX = HALF_SCREEN_WIDTH
     centerY = HALF_SCREEN_HEIGHT
+    grid_image = None
 
 
-
-    def __init__(self, screen,bg_color,mood_str):
+    def __init__(self, screen,bg_color):
         self.bg_color = bg_color
         self.screen = screen
-        self.mood_str = mood_str
-        self.image = self.getLoadedImage()
+
 
 
     def getLoadedImage(self):
@@ -47,7 +46,7 @@ class GameView(View):
         art_dict = searchArtObj.getImageList()
         getArtWorkObj = GetArtTiles(art_dict)
         art_tiles_obj = getArtWorkObj.getArtImage()
-        art_image = GetArtImage(art_tiles_obj)
+        art_image = GetArtImage(art_tiles_obj,self.grid_width,self.grid_height)
         bitmap_art_image = art_image.getBitmapFromTiles()
         return bitmap_art_image
 
@@ -70,6 +69,7 @@ class GameView(View):
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.calcualteTileSize()
         self.calculateGridSize()
+        self.puzzle_image = self.getLoadedImage()
         # display_surface = pygame.display.set_mode((self.grid_width, self.grid_height))
 
 
@@ -95,10 +95,8 @@ class GameView(View):
 
 
     def render(self):
-        # textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
-        self.screen.fill(self.bg_color)
-        self.screen.blit(pygame.transform.scale(self.image, (self.grid_width, self.grid_height)),
-                         (self.top_drag_grid_x, self.top_drag_grid_y))
+       
+        self.screen.blit(self.puzzle_image,(self.top_drag_grid_x, self.top_drag_grid_y))
         print("on screen")
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         pygame.display.flip()
