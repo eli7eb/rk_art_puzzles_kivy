@@ -114,4 +114,14 @@ class GetArtImage:
         data = grid_image.tobytes()
 
         py_image = pygame.image.fromstring(data, size, mode)
-        return py_image
+        return py_image,grid_image
+
+    # cut the image to tiles and return them as two dimentianal array
+    # im_crop = im.crop((100, 75, 300, 150))
+    # calculate # tiles : regular and level specific
+    # calculate per col and per line
+
+    def getImageTiles(self):
+        w, h = 8, 5;
+        matrix = [[0 for x in range(w)] for y in range(h)]
+        return matrix

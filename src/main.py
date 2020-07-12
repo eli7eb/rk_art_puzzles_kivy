@@ -3,6 +3,9 @@ import pygame
 import sys
 import time
 import random
+
+from src.game_consts.game_constants import LEVEL_BEGIN
+
 pygame.font.init()
 from pygame.locals import *
 
@@ -10,6 +13,7 @@ from src.game_views.text_view import TextView
 from src.game_views.main_menu_view import MenuView
 from src.game_views.quit_view import QuitView
 from src.game_views.game_view import GameView
+from src.game_consts.game_constants import *
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -17,7 +21,7 @@ font = pygame.font.SysFont(None, 20)
 WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
-
+level = LEVEL_BEGIN
 # load resources
 # constants
 WIDTH, HEIGHT = 750, 750
@@ -79,7 +83,7 @@ while True:
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
         if (currentViewId == VIEW_STATE_GAME_A):
-            currentViewState.prepare(mood_str)
+            currentViewState.prepare(mood_str,level)
         else:
             currentViewState.prepare()
 
