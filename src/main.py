@@ -74,6 +74,8 @@ while True:
         print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
         if (currentViewId == VIEW_STATE_MENU):
             mood_str = currentViewState.textinput.get_text()
+            currentViewState.clean()
+
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
         if (currentViewId == VIEW_STATE_GAME_A):

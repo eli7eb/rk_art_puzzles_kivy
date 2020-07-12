@@ -108,7 +108,7 @@ class GetArtImage:
             print(final_image.height)
             final_image.paste(tmp_image,(tmp_x,tmp_y))
 
-        grid_image = final_image.resize((self.width, self.height),Image.LANCZOS)
+        grid_image = final_image.resize((int(self.width), int(self.height)),Image.LANCZOS)
         mode = grid_image.mode
         size = grid_image.size
         data = grid_image.tobytes()

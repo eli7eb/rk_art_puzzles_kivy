@@ -25,8 +25,8 @@ BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_backgro
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
 menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
-COLOR_INACTIVE = pygame.Color('lightskyblue3')
-COLOR_ACTIVE = pygame.Color('dodgerblue2')
+COLOR_INACTIVE = pygame.Color('azure2')
+COLOR_ACTIVE = pygame.Color('azure1')
 FONT = pygame.font.Font(None, 32)
 
 
@@ -166,6 +166,10 @@ class MenuView(View):
         self.textinput.update()
         self.textinput.draw(self.screen)
         pygame.display.flip()
+
+    def clean(self):
+        transparent = (127, 127, 127)
+        self.screen.fill(transparent)
 
     def transition(self):
         return self.transitionToState

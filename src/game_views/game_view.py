@@ -56,7 +56,7 @@ class GameView(View):
         print("tile size " + str(self.tile_size))
 
     def calculateGridSize(self):
-        self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR*SCREEN_SPACER_SIZE
+        self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR*SCREEN_SPACER_SIZE - self.tile_size
         self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER*SCREEN_SPACER_SIZE
 
 
@@ -95,7 +95,7 @@ class GameView(View):
 
 
     def render(self):
-       
+
         self.screen.blit(self.puzzle_image,(self.top_drag_grid_x, self.top_drag_grid_y))
         print("on screen")
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
