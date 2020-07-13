@@ -103,7 +103,7 @@ class GetArtImage:
             tmp_image = Image.open(requests.get(i['url'], stream=True).raw)
             tmp_x = i['x'] * GLOBAL_TILE_SIZE
             tmp_y = i['y'] * GLOBAL_TILE_SIZE
-            print ('image w h')
+            print('image w h')
             print(final_image.width)
             print(final_image.height)
             final_image.paste(tmp_image,(tmp_x,tmp_y))
@@ -114,7 +114,7 @@ class GetArtImage:
         data = grid_image.tobytes()
 
         py_image = pygame.image.fromstring(data, size, mode)
-        return py_image,grid_image
+        return py_image, grid_image
 
     # cut the image to tiles and return them as two dimentianal array
     # im_crop = im.crop((100, 75, 300, 150))

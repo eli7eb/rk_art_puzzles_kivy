@@ -30,7 +30,11 @@ class GameUtils:
 
     # crop function
     # Set the cropping area with box=(left, upper, right, lower).
-
+    # an_array = [[1, 2], [3, 4]]
+    # rows = len(an_array) Find row and column length.
+    # columns = len(an_array[0])
+    # total_length = rows * columns. Compute total length.
+    # print(total_length)
     def crop_image_to_array(self,image):
         self.image = image
 
@@ -40,14 +44,17 @@ class GameUtils:
         h = int(SCREEN_HEIGHT // self.tile_size)
 
         tile_matrix = [[0 for x in range(w)] for y in range(h)]
-        for i in range(w):
-            for j in range(h):
+        print ('array rows %s cols %s',str(len(tile_matrix)),str(len(tile_matrix[0])))
+        for i in range(w-1):
+            for j in range(h-1):
                 top = SCREEN_SPACER_SIZE + i*self.tile_size
                 upper = SCREEN_SPACER_SIZE + j*self.tile_size
                 right = SCREEN_SPACER_SIZE + i * self.tile_size + self.tile_size
                 lower = SCREEN_SPACER_SIZE + j * self.tile_size + self.tile_size
-
-                cropped = self.image.crop((top,upper,right,lower))
+                print('i %s j %s top % upper % right % lower %', str(i), str(j), str(top), str(upper), str(right),
+                      str(lower))
+                cropped = self.image.crop((top, upper, right, lower))
                 tile_matrix[i][j] = cropped
+
         return cropped
 
