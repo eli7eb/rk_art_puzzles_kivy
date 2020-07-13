@@ -44,9 +44,10 @@ class GameUtils:
         h = int(SCREEN_HEIGHT // self.tile_size)
 
         tile_matrix = [[0 for x in range(w)] for y in range(h)]
-        print ('array rows %s cols %s',str(len(tile_matrix)),str(len(tile_matrix[0])))
-        for i in range(w-1):
-            for j in range(h-1):
+        print('array rows %s cols %s', str(len(tile_matrix)), str(len(tile_matrix[0])))
+        for i in range(len(tile_matrix)):
+            for j in range(len(tile_matrix[i])):
+                print('i %s j %s', str(i), str(j))
                 top = SCREEN_SPACER_SIZE + i*self.tile_size
                 upper = SCREEN_SPACER_SIZE + j*self.tile_size
                 right = SCREEN_SPACER_SIZE + i * self.tile_size + self.tile_size
@@ -54,7 +55,8 @@ class GameUtils:
                 print('i %s j %s top % upper % right % lower %', str(i), str(j), str(top), str(upper), str(right),
                       str(lower))
                 cropped = self.image.crop((top, upper, right, lower))
+                # TODO generate tile class image, x,y, state : found, in pos
                 tile_matrix[i][j] = cropped
 
-        return cropped
+        return tile_matrix
 

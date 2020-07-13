@@ -58,7 +58,11 @@ class GameView(View):
 
     def prepare(self, mood_str, level):
         self.transitionToState = None
-        self.mood_str = mood_str
+        # TODO generate an array to get random value from
+        if mood_str == '':
+            self.mood_str = 'hand'
+        else:
+            self.mood_str = mood_str
         self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
@@ -85,12 +89,14 @@ class GameView(View):
 
             # when ends : go back to main menu game over
             # self.transitionToState = self.MENU_ITEM_TO_VIEW_STATE[self.selectedItem]
-
+    def display_tiles(self):
+        print ('len to display %s',len(self.tiles_grid))
 
     def render(self):
         if self.level < LEVEL_MASTER:
             self.screen.blit(self.puzzle_image,(self.top_drag_grid_x, self.top_drag_grid_y))
-
+        else:
+            self.display_tiles()
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         pygame.display.flip()
 
