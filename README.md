@@ -7,7 +7,9 @@ you will get a puzzle to solve from the rijk musuem in Amsterdam.
 
 Programming python and pygame
 Phases:
-
+Main menu
 OOP:
+View class
+Tile class
 
 State Machine:

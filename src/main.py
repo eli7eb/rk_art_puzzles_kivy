@@ -21,7 +21,7 @@ font = pygame.font.SysFont(None, 20)
 WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
-level = LEVEL_BEGIN
+level = LEVEL_CHAMPION
 # load resources
 # constants
 WIDTH, HEIGHT = 750, 750
@@ -82,8 +82,8 @@ while True:
 
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
-        if (currentViewId == VIEW_STATE_GAME_A):
-            currentViewState.prepare(mood_str,level)
+        if currentViewId == VIEW_STATE_GAME_A:
+            currentViewState.prepare(mood_str, level)
         else:
             currentViewState.prepare()
 
@@ -91,7 +91,7 @@ while True:
 def main():
     run = True
     FPS = 60
-    level = 0
+    level = LEVEL_CHAMPION
     lives = 5
     # make an object for all player info
     try_counter = 0

@@ -1,4 +1,8 @@
 import pygame
+import random
+from src.game_consts.game_constants import *
+from src.ui_elements.grid_tile import Tile
+
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
 HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
@@ -28,6 +32,8 @@ class GameUtils:
         self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE
         return (self.grid_width,self.grid_height)
 
+    def getRandomSearchValue(self):
+        return random.choice(MOOD_IDEAS)
     # crop function
     # Set the cropping area with box=(left, upper, right, lower).
     # an_array = [[1, 2], [3, 4]]
@@ -43,11 +49,13 @@ class GameUtils:
         # floor division
         h = int(SCREEN_HEIGHT // self.tile_size)
 
-        tile_matrix = [[0 for x in range(w)] for y in range(h)]
-        print('array rows %s cols %s', str(len(tile_matrix)), str(len(tile_matrix[0])))
+        tile_matrix = [[None for x in range(w)] for y in range(h)]
+
+        print('array rows {} cols {}'.format(str(len(tile_matrix)), str(len(tile_matrix[0]))))
+
         for i in range(len(tile_matrix)):
             for j in range(len(tile_matrix[i])):
-                print('i %s j %s', str(i), str(j))
+                print('i {} j {}'.format( str(i), str(j)))
                 top = SCREEN_SPACER_SIZE + i*self.tile_size
                 upper = SCREEN_SPACER_SIZE + j*self.tile_size
                 right = SCREEN_SPACER_SIZE + i * self.tile_size + self.tile_size
@@ -55,8 +63,17 @@ class GameUtils:
                 print('i %s j %s top % upper % right % lower %', str(i), str(j), str(top), str(upper), str(right),
                       str(lower))
                 cropped = self.image.crop((top, upper, right, lower))
+                # convert to pygame image
+
                 # TODO generate tile class image, x,y, state : found, in pos
-                tile_matrix[i][j] = cropped
+                mode = cropped.mode
+                size = cropped.size
+                data = cropped.tobytes()
+                #
+                py_image = pygame.image.fromstring(data, size, mode)
+                # position is set in game view when the tile is displayed
+                py_tile = Tile(py_image,self.tile_size,0,0,TILE_INVISIBLE)
+                tile_matrix[i][j] = py_tile
 
         return tile_matrix
 
