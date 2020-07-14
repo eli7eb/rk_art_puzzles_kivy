@@ -43,10 +43,23 @@ class GameView(View):
     grid_image = None
 
     def __init__(self, screen, bg_color):
+        self.mood_str = None
         self.transitionToState = None
         self.bg_color = bg_color
         self.screen = screen
         self.game_utils = GameUtils()
+        self.level = None
+        self.top_drag_grid_x = SCREEN_SPACER_SIZE
+        self.top_drag_grid_y = SCREEN_SPACER_SIZE
+        self.dash_board_position = [0, 0]
+        self.drag_tiles_position = [0, 0]
+
+        self.tile_size = None
+        self.grid_size = None
+        self.puzzle_image = None
+        self.pil_image = None
+
+        self.tiles_grid = None
 
     # call the game utils to load the image from list of images returned
     # resize image
@@ -71,6 +84,8 @@ class GameView(View):
         self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
+        self.dash_board_position = [4,3]
+        self.drag_tiles_position = [4, 3]
 
         self.tile_size = self.game_utils.calculateTileSize()
         self.grid_size = self.game_utils.calculateGridSize()
@@ -103,7 +118,6 @@ class GameView(View):
         # check for grid tiles
         for i in range(len(self.tiles_grid)):
             for j in range(len(self.tiles_grid[i])):
-                print('row {} col {}'.format(str(i), str(j)))
 
                 x = SCREEN_SPACER_SIZE*(i+1) + i * self.tile_size
                 y = SCREEN_SPACER_SIZE*(j+1) + j * self.tile_size
@@ -113,7 +127,22 @@ class GameView(View):
                 tile_object.y = y
                 tile_object.state = TILE_ON_BOARD_TEST
                 self.screen.blit(tile, (x, y))
+                print('row {} col {}'.format(str(x), str(y)))
+
                 self.tiles_grid[i][j] = tile_object
+
+    # get 4 random tiles which are not yet displayed
+    # display vertically
+    # add mouse drag actions
+    def display_drag_tiles(self):
+        print()
+
+    # display game dashboard
+    # time
+    # tiles x of y
+    # name of art and painter are shown as the player progresses
+    def display_dash_board(self):
+        print()
 
 
     def render(self):
@@ -121,6 +150,8 @@ class GameView(View):
             self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
             self.display_tiles()
+            self.display_drag_tiles()
+            self.display_dash_board()
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         pygame.display.flip()
 
