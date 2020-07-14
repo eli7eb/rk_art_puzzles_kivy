@@ -6,7 +6,7 @@ from src.ui_elements.menu_button import MenuButton
 # Background
 
 class MainMenu:
-    def __init__(self,win,width,height):
+    def __init__(self, win, width, height):
         self.done = False
         self.screen = win
         self.bg_width = width
@@ -54,3 +54,10 @@ class MainMenu:
 
             pygame.display.update()
             mainClock.tick(60)
+
+    def transition(self):
+        nextView = None
+        if pygame.time.get_ticks() - self.startTime >= 2000:
+            nextView = self.nextView
+        # print loading message
+        return nextView

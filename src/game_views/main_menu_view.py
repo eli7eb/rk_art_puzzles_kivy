@@ -2,6 +2,7 @@
 # get user mood or not
 # return will lead to load image interstate menu
 import os
+import random
 import pygame
 from pygame.locals import *
 from src.game_views.views import View
@@ -18,6 +19,7 @@ SCREEN_HEIGHT = 800
 HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
+
 
 # Background
 BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -79,6 +81,7 @@ class MenuView(View):
     # Displays the main menu
 
     titleText = "RK_PUZZLES"
+
     menuItems = ['Play', 'Options', 'About', 'Quit']
     selectedItem = 0
     centerX = HALF_SCREEN_WIDTH
@@ -101,6 +104,7 @@ class MenuView(View):
         self.textinput = InputBox(self.centerX, (self.centerY - 60), 140, 32)
         self.mood_str = ''
         self.mood_str_1 = ''
+        self.loading_msg = ''
         View.__init__(self, screen,self.bg_color)
 
     def prepare(self):
@@ -133,6 +137,8 @@ class MenuView(View):
                     # check to see if there is anything in the text
                     print("K_RETURN mood_str '%s'" % self.textinput.text)
                     print("K_RETURN clicked menu item '%s'" % self.menuItems[self.selectedItem])
+                    # set loading message
+                    self.loading_msg = 'LOADING ART'
                     self.transitionToState = self.MENU_ITEM_TO_VIEW_STATE[self.selectedItem]
 
     def renderMenuItems(self, screen, selectedItem):
@@ -154,17 +160,32 @@ class MenuView(View):
                 pygame.draw.circle(self.screen, TEXT_COLOR, (int(textX - 15), int(textY + 15)), 5)
             else:
                 textSurface = menuFont.render(menuItemText, True, TEXT_COLOR)
+
             self.screen.blit(textSurface, [textX, textY])
             index += 1
+
+    def generate_random_color(self):
+        start = 0
+        stop = 255
+
+        red = random.randint(start, stop)
+        green = random.randint(start, stop)
+        blue = random.randint(start, stop)
+        return pygame.Color(red,green,blue)
 
     def render(self):
         textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
 
         self.screen.blit(BG, (0, 0))
-        self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-        self.renderMenuItems(self.screen, self.selectedItem)
-        self.textinput.update()
-        self.textinput.draw(self.screen)
+        # when mood is entered change the display
+        if self.loading_msg:
+            loading_str = titleFont.render(self.loading_msg, True, self.generate_random_color())
+            self.screen.blit(loading_str, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
+        else:
+            self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
+            self.renderMenuItems(self.screen, self.selectedItem)
+            self.textinput.update()
+            self.textinput.draw(self.screen)
         pygame.display.flip()
 
     def clean(self):
