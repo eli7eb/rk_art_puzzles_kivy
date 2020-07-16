@@ -31,7 +31,7 @@ class SearchArt:
             json_obj = json.loads(response.content.decode('utf-8'))
             print(json_obj['artObjects'])
             art_list = json_obj['artObjects']
-
+# TODO get the images that are portrait not landscape
             if len(art_list) > 0:
                 art_index = randrange(len(art_list))
             print(art_index)
