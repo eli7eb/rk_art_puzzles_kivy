@@ -12,4 +12,7 @@ TILE_IN_PLACE = 3
 TILE_DRAGGED = 4
 TILE_DROPPED = 5
 
+PORTRAIT = 'portrait'
+LANDSCAPE = 'landscape'
+
 MOOD_IDEAS = ['art', 'spring', 'summer', 'winter', 'cat', 'dog', 'farm', 'king', 'prince', 'happy', 'castle', 'bread', 'flower', 'war', 'library']

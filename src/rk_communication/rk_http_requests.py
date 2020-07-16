@@ -3,10 +3,24 @@ import json
 import pygame
 from PIL import Image
 from random import randrange
+from src.game_consts.game_constants import PORTRAIT, LANDSCAPE
 GLOBAL_TILE_SIZE = 512
 
 
 class SearchArt:
+
+    # from the list of web images returned choose only the portrait or landscape ones
+    def get_matched_list(self, art_list, mode):
+        returned_list = []
+        for item in art_list:
+            print('item {}'.format(item['title']))
+            print('w {} h {}'.format(str(item['webImage']['width']), str(item['webImage']['height'])))
+            if mode == PORTRAIT and (item['webImage']['height'] > item['webImage']['width']):
+                returned_list.append(item)
+            elif mode == LANDSCAPE and (item['webImage']['width'] > item['webImage']['height']):
+                returned_list.append(item)
+        return returned_list
+
 
     def getImageList(self):
         rk_api_token = 'aTcoXoCh'
@@ -29,19 +43,21 @@ class SearchArt:
             print(response.text)
 
             json_obj = json.loads(response.content.decode('utf-8'))
-            print(json_obj['artObjects'])
+            print('json objects {}'.format(json_obj['artObjects']))
             art_list = json_obj['artObjects']
-# TODO get the images that are portrait not landscape
-            if len(art_list) > 0:
-                art_index = randrange(len(art_list))
-            print(art_index)
-            return art_list[art_index]
+            art_portrait_list = self.get_matched_list(json_obj['artObjects'],PORTRAIT)
+            if len(art_portrait_list) > 0:
+
+                art_index = randrange(len(art_portrait_list))
+            print(art_portrait_list)
+            return art_portrait_list[art_index]
         else:
             print('error ' + response.status_code)
 
     def __init__(self, mood_str):
         self.currentState = None
         self.search_value = mood_str
+
 
 class GetArtTiles:
     print('get the one')
