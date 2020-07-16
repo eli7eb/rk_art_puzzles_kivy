@@ -14,13 +14,12 @@ class SearchArt:
         returned_list = []
         for item in art_list:
             print('item {}'.format(item['title']))
-            print('w {} h {}'.format(str(item['webImage']['width']), str(item['webImage']['height'])))
+            # print('w {} h {}'.format(str(item['webImage']['width']), str(item['webImage']['height'])))
             if mode == PORTRAIT and (item['webImage']['height'] > item['webImage']['width']):
                 returned_list.append(item)
             elif mode == LANDSCAPE and (item['webImage']['width'] > item['webImage']['height']):
                 returned_list.append(item)
         return returned_list
-
 
     def getImageList(self):
         rk_api_token = 'aTcoXoCh'
@@ -46,12 +45,14 @@ class SearchArt:
             print('json objects {}'.format(json_obj['artObjects']))
             art_list = json_obj['artObjects']
             art_portrait_list = self.get_matched_list(json_obj['artObjects'],PORTRAIT)
+            art_index = 0
             if len(art_portrait_list) > 0:
-
                 art_index = randrange(len(art_portrait_list))
-            print(art_portrait_list)
-            return art_portrait_list[art_index]
+                return art_portrait_list[art_index]
+            # here I return a blank list so take what you have
+            return art_list[0]
         else:
+            # TODO errormsgto user to check network etc
             print('error ' + response.status_code)
 
     def __init__(self, mood_str):
@@ -109,10 +110,11 @@ class GetArtImage:
                 return l
         return image_levels[0]
 
+    # image is returned in tiles which need to be pasted into one image
     def getBitmapFromTiles(self):
 
         # choose the level by name z0 is the largest resolution z6 is the lowest resolution
-        #   look for z3 or z4
+        # look for z3 or z4
         image_levels = self.art_obj['levels']
         art_level = self.searchForLevel(image_levels)
         final_image = Image.new('RGB', (art_level['width'], art_level['height']))
@@ -133,12 +135,3 @@ class GetArtImage:
         py_image = pygame.image.fromstring(data, size, mode)
         return py_image, grid_image
 
-    # cut the image to tiles and return them as two dimentianal array
-    # im_crop = im.crop((100, 75, 300, 150))
-    # calculate # tiles : regular and level specific
-    # calculate per col and per line
-
-    def getImageTiles(self):
-        w, h = 8, 5;
-        matrix = [[0 for x in range(w)] for y in range(h)]
-        return matrix

@@ -26,6 +26,7 @@ SCREEN_SPACER_NUMBER_HOR = 2
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 FONT = pygame.font.Font(None, 32)
 
+
 # main game loop
 # start in prepare function
 # by bringing the puzzle image in one image and as grid tiles
@@ -95,11 +96,11 @@ class GameView(View):
         self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
-        self.dash_board_position = [4,3]
+        self.dash_board_position = [4, 3]
         self.drag_tiles_position = [4, 3]
 
         self.tile_size = self.game_utils.tile_size
-        self.grid_size = (self.game_utils.grid_width,self.game_utils.grid_height)
+        self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
 
         self.puzzle_image, self.pil_image = self.getLoadedImage()
 
@@ -129,25 +130,34 @@ class GameView(View):
     def display_tiles(self):
         # check for grid tiles
         counter = 0
+
         print('rows {} cols [0] {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
         # calculte the Y positions
         col_positions = [SCREEN_SPACER_SIZE,
-                         self.tile_size+2*SCREEN_SPACER_SIZE,
-                         2*self.tile_size+3*SCREEN_SPACER_SIZE,
-                         3*self.tile_size+4*SCREEN_SPACER_SIZE]
-        for i in range(len(self.tiles_grid)):
-            for j in range(len(self.tiles_grid[i])):
-                x = SCREEN_SPACER_SIZE * (i + 1) + i * self.tile_size
-                y = col_positions[j]
-                tile_object = self.tiles_grid[i][j]
-                tile = tile_object.image
-                tile_object.x = x
-                tile_object.y = y
-                tile_object.state = TILE_ON_BOARD_TEST
-                self.screen.blit(tile, (x, y))
-                print('i {} j {} row {} col {}'.format(str(i), str(j), str(x), str(y)))
-                self.tiles_grid[i][j] = tile_object
-        print ('end display tiles')
+                         self.tile_size + 2 * SCREEN_SPACER_SIZE,
+                         2 * self.tile_size + 3 * SCREEN_SPACER_SIZE,
+                         3 * self.tile_size + 4 * SCREEN_SPACER_SIZE]
+        counter_col = 0
+        for row in self.tiles_grid:
+            for col in row:
+                # row_index is screen spacer and tile size times row
+                screen_spacer_hor_size = SCREEN_SPACER_SIZE * (col.y_index + 1)
+                tiles_size = col.y_index * self.tile_size
+                y = screen_spacer_hor_size + tiles_size
+                # col is one of 4 positions on grid
+                x = col_positions[counter_col]
+                display_tile = col.image
+                # TODO set the Tile object state
+                # tile.y = y
+                # tile.state = TILE_ON_BOARD_TEST
+                self.screen.blit(display_tile, (x, y))
+                print('row {} col {} x {} y {}'.format(str(col.y_index), str(col.x_index), str(x), str(y)))
+                # self.tiles_grid[col.y_index][col.x_index] = tile
+                counter_col += 1
+                if counter_col == 3:
+                    counter_col = 0
+        print('end display tiles')
+
     # get 6 random tiles which are not yet displayed
     # display vertically
     # add mouse drag actions
@@ -160,7 +170,6 @@ class GameView(View):
     # name of art and painter are shown as the player progresses
     def display_dash_board(self):
         print()
-
 
     def render(self):
         if self.level < LEVEL_MASTER:

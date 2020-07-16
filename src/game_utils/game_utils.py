@@ -37,39 +37,55 @@ class GameUtils:
     # columns = len(an_array[0])
     # total_length = rows * columns. Compute total length.
     # print(total_length)
-    def crop_image_to_array(self,image):
+    # cut the image to tiles and return them as two dimentianal array
+    # im_crop = im.crop((100, 75, 300, 150))
+    # calculate # tiles : regular and level specific
+    # calculate per col and per line
+
+    def crop_image_to_array(self, image):
         self.image = image
 
         # TODO 4 tiles across depends on level
         w = 4
         # floor division
         h = int(SCREEN_HEIGHT // self.tile_size)
+        # build matrix for tiles
+        # TODO this is for test - delete later
+        tile_matrix = [[1]*w for n in range(h)]
+        tile_matrix[0] = [0, 1, 2, 3]
+        tile_matrix[1] = [4, 5, 6, 7]
+        tile_matrix[2] = [8,9,10,11]
+        tile_matrix[3] = [12,13,14,15]
+        tile_matrix[4] = [16,17,18,19]
+        tile_matrix[5] = [20,21,22,23]
 
-        tile_matrix = [[None for x in range(w)] for y in range(h)]
-
-        print('array rows {} cols {}'.format(str(len(tile_matrix)), str(len(tile_matrix[0]))))
-        print('tile matrix prep w {} h {}'.format(str(w), str(h)))
-        for i in range(len(tile_matrix)):
-            for j in range(len(tile_matrix[i])):
-                print('i {} j {}'.format( str(i), str(j)))
-                top = SCREEN_SPACER_SIZE + i*self.tile_size
-                upper = SCREEN_SPACER_SIZE + j*self.tile_size
-                right = SCREEN_SPACER_SIZE + i * self.tile_size + self.tile_size
-                lower = SCREEN_SPACER_SIZE + j * self.tile_size + self.tile_size
-                print('i %s j %s top % upper % right % lower %', str(i), str(j), str(top), str(upper), str(right),
-                      str(lower))
+        # row is y col is x
+        x = 0
+        y = 0
+        counter = 0
+        for row in tile_matrix:
+            for col in row:
+                print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
+                top = x * self.tile_size
+                upper = y * self.tile_size
+                right = x * self.tile_size + self.tile_size
+                lower = y * self.tile_size + self.tile_size
+                #print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
+                #print('counter {}'.format(str(counter)))
                 cropped = self.image.crop((top, upper, right, lower))
                 # convert to pygame image
-
-                # TODO generate tile class image, x,y, state : found, in pos
                 mode = cropped.mode
                 size = cropped.size
                 data = cropped.tobytes()
                 #
                 py_image = pygame.image.fromstring(data, size, mode)
                 # position is set in game view when the tile is displayed
-                py_tile = Tile(py_image,self.tile_size,0,0,TILE_INVISIBLE)
-                tile_matrix[i][j] = py_tile
+                py_tile = Tile(py_image, self.tile_size, x, y, TILE_INVISIBLE)
+                tile_matrix[x][y] = py_tile
+                counter += 1
+                y += 1
+            x += 1
+            y = 0
 
         return tile_matrix
 
