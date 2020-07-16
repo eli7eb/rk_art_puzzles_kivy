@@ -48,7 +48,7 @@ class GameUtils:
         tile_matrix = [[None for x in range(w)] for y in range(h)]
 
         print('array rows {} cols {}'.format(str(len(tile_matrix)), str(len(tile_matrix[0]))))
-
+        print('tile matrix prep w {} h {}'.format(str(w), str(h)))
         for i in range(len(tile_matrix)):
             for j in range(len(tile_matrix[i])):
                 print('i {} j {}'.format( str(i), str(j)))

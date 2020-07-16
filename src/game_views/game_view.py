@@ -32,6 +32,7 @@ FONT = pygame.font.Font(None, 32)
 # by level decide how and if to display it
 # implement drag and drop function
 # implement game dashboard: score, time, number of tiles left etc
+# dash board also has mood str and the RK result
 # TODO add pause button
 # TODO levels description
 # first level show bg half transparent of image. then show a percentage of tiles. i.e. for 24 tiles show 6 then decrease.
