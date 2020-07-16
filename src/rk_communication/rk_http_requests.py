@@ -86,6 +86,7 @@ class GetArtImage:
         self.width = width
         self.height = height
 
+    # TODO add assert for error here
     def searchForLevel(self, image_levels):
         for l in image_levels:
             if l['name'] == 'z3':

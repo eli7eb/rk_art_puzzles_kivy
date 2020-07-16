@@ -162,7 +162,7 @@ menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
 views = { \
-    VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU),
+    VIEW_STATE_SPLASH: TextView(screen, "Splash screen", VIEW_STATE_MENU),
     VIEW_STATE_MENU: MenuView(screen),
     VIEW_STATE_GAME_A: TextView(screen, "Game A screen...", VIEW_STATE_MENU),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU),

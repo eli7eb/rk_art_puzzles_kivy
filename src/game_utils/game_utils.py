@@ -9,28 +9,24 @@ HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
 SCREEN_SPACER_SIZE = 5
-# how many spacers vertical and horizontal
+# how many spacers vertical and horizontal for the three main containers in the screen
+# vertically 3 left. between grid and drag tiles and right
+# horizntally 3 top between grid and dashboard and bottom
 SCREEN_SPACER_NUMBER_VER = 3
-SCREEN_SPACER_NUMBER_HOR = 2
-
+SCREEN_SPACER_NUMBER_HOR = 3
+# count number of spaces in grid is calculated as number of tiles horizontally -1
+# count number of spaces in grid is calculated as number of tiles vertically -1
 
 class GameUtils:
 
     def __init__(self):
         self.done = False
         self.image = None
-
-    # tile needs to fit in the screen 5 times in the horizontal directions with overheads
-    # at least 5 tiles across: 4 grid and one to drag
-    def calculateTileSize(self):
+        # tile needs to fit in the screen 5 times in the horizontal directions with overheads
+        # at least 5 tiles across: 4 grid and one to drag
         self.tile_size = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / 5
-        print("tile size " + str(self.tile_size))
-        return self.tile_size
-
-    def calculateGridSize(self):
         self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE - self.tile_size
         self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE
-        return (self.grid_width,self.grid_height)
 
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)

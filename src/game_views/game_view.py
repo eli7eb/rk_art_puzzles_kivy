@@ -32,7 +32,17 @@ FONT = pygame.font.Font(None, 32)
 # by level decide how and if to display it
 # implement drag and drop function
 # implement game dashboard: score, time, number of tiles left etc
-
+# TODO add pause button
+# TODO levels description
+# first level show bg half transparent of image. then show a percentage of tiles. i.e. for 24 tiles show 6 then decrease.
+# when hover on correct tile glow. then glow at finite number of times. when done issue a message you are now on your own
+# show art for X seconds then dissapear before game start
+# finite number of steps until game over
+# button for info on art
+# number of tiles per grid
+# change of levels in options: you have set your level vs you have achieved your level
+# text into locale
+# number of tiles to drag is always number of rows
 
 class GameView(View):
     # Displays the main menu
@@ -87,8 +97,9 @@ class GameView(View):
         self.dash_board_position = [4,3]
         self.drag_tiles_position = [4, 3]
 
-        self.tile_size = self.game_utils.calculateTileSize()
-        self.grid_size = self.game_utils.calculateGridSize()
+        self.tile_size = self.game_utils.tile_size
+        self.grid_size = (self.game_utils.grid_width,self.game_utils.grid_height)
+
         self.puzzle_image, self.pil_image = self.getLoadedImage()
 
         self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image)
@@ -116,22 +127,27 @@ class GameView(View):
     # the second is spacer * row or col + 1
     def display_tiles(self):
         # check for grid tiles
+        counter = 0
+        print('rows {} cols [0] {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
+        # calculte the Y positions
+        col_positions = [SCREEN_SPACER_SIZE,
+                         self.tile_size+2*SCREEN_SPACER_SIZE,
+                         2*self.tile_size+3*SCREEN_SPACER_SIZE,
+                         3*self.tile_size+4*SCREEN_SPACER_SIZE]
         for i in range(len(self.tiles_grid)):
             for j in range(len(self.tiles_grid[i])):
-
-                x = SCREEN_SPACER_SIZE*(i+1) + i * self.tile_size
-                y = SCREEN_SPACER_SIZE*(j+1) + j * self.tile_size
+                x = SCREEN_SPACER_SIZE * (i + 1) + i * self.tile_size
+                y = col_positions[j]
                 tile_object = self.tiles_grid[i][j]
                 tile = tile_object.image
                 tile_object.x = x
                 tile_object.y = y
                 tile_object.state = TILE_ON_BOARD_TEST
                 self.screen.blit(tile, (x, y))
-                print('row {} col {}'.format(str(x), str(y)))
-
+                print('i {} j {} row {} col {}'.format(str(i), str(j), str(x), str(y)))
                 self.tiles_grid[i][j] = tile_object
-
-    # get 4 random tiles which are not yet displayed
+        print ('end display tiles')
+    # get 6 random tiles which are not yet displayed
     # display vertically
     # add mouse drag actions
     def display_drag_tiles(self):
@@ -153,7 +169,7 @@ class GameView(View):
             self.display_drag_tiles()
             self.display_dash_board()
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-        pygame.display.flip()
+        # pygame.display.flip()
 
     def transition(self):
         return self.transitionToState
