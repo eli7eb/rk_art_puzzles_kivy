@@ -131,31 +131,43 @@ class GameView(View):
         # check for grid tiles
         counter = 0
 
-        print('rows {} cols [0] {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
+        print('rows {} cols  {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
         # calculte the Y positions
         col_positions = [SCREEN_SPACER_SIZE,
                          self.tile_size + 2 * SCREEN_SPACER_SIZE,
                          2 * self.tile_size + 3 * SCREEN_SPACER_SIZE,
                          3 * self.tile_size + 4 * SCREEN_SPACER_SIZE]
         counter_col = 0
+        # row is y col is x
+        x = 0
+        y = 0
+        counter = 0
+
         for row in self.tiles_grid:
             for col in row:
                 # row_index is screen spacer and tile size times row
-                screen_spacer_hor_size = SCREEN_SPACER_SIZE * (col.y_index + 1)
-                tiles_size = col.y_index * self.tile_size
-                y = screen_spacer_hor_size + tiles_size
+                if col.row_index == 0:
+                    row_spacer = SCREEN_SPACER_SIZE
+                elif col.row_index == 1:
+                    row_spacer = SCREEN_SPACER_SIZE*2
+                elif col.row_index == 2:
+                    row_spacer = SCREEN_SPACER_SIZE * 2 + SCREEN_SPACER_SIZE
+                else:
+                    row_spacer = SCREEN_SPACER_SIZE*col.row_index + SCREEN_SPACER_SIZE
+                row_pos = col.row_index*col.size + row_spacer
                 # col is one of 4 positions on grid
-                x = col_positions[counter_col]
+                col_pos = col_positions[col.col_index]
                 display_tile = col.image
                 # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                self.screen.blit(display_tile, (x, y))
-                print('row {} col {} x {} y {}'.format(str(col.y_index), str(col.x_index), str(x), str(y)))
+                self.screen.blit(display_tile, (row_pos, col_pos))
+                print('row {} col {}'.format(str(row_pos), str(col_pos)))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
-                counter_col += 1
-                if counter_col == 3:
-                    counter_col = 0
+                print('counter {}'.format(str(counter)))
+                counter += 1
+
+
         print('end display tiles')
 
     # get 6 random tiles which are not yet displayed

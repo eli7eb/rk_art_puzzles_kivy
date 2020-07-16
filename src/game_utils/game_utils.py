@@ -60,16 +60,16 @@ class GameUtils:
         tile_matrix[5] = [20,21,22,23]
 
         # row is y col is x
-        x = 0
-        y = 0
+        row_index = 0
+        col_index = 0
         counter = 0
         for row in tile_matrix:
             for col in row:
-                print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
-                top = x * self.tile_size
-                upper = y * self.tile_size
-                right = x * self.tile_size + self.tile_size
-                lower = y * self.tile_size + self.tile_size
+                #print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
+                top = row_index * self.tile_size
+                upper = col_index * self.tile_size
+                right = row_index * self.tile_size + self.tile_size
+                lower = col_index * self.tile_size + self.tile_size
                 #print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
                 #print('counter {}'.format(str(counter)))
                 cropped = self.image.crop((top, upper, right, lower))
@@ -80,12 +80,12 @@ class GameUtils:
                 #
                 py_image = pygame.image.fromstring(data, size, mode)
                 # position is set in game view when the tile is displayed
-                py_tile = Tile(py_image, self.tile_size, x, y, TILE_INVISIBLE)
-                tile_matrix[x][y] = py_tile
+                py_tile = Tile(py_image, self.tile_size, row_index, col_index, TILE_INVISIBLE)
+                tile_matrix[row_index][col_index] = py_tile
                 counter += 1
-                y += 1
-            x += 1
-            y = 0
+                col_index += 1
+            row_index += 1
+            col_index = 0
 
         return tile_matrix
 
