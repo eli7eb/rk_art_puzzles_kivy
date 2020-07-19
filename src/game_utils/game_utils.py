@@ -22,10 +22,30 @@ SCREEN_SPACER_NUMBER_HOR = 3
 # values are first 2 are row,col on the left side
 # last 2 are bottom right on the right side
 # TODO if error exit game ? or find new image ?
-def validete_crop_size(image_width, image_height, tile_size, *values):
-    
+def validete_crop_size(width, height, tile_size, *values):
+    x = 0
+    y = 0
+    left = values[0]
+    upper = values[1]
+    right = values[2]
+    lower = values[3]
+
+    if right < left:
+        left, right = right, left
+
+    if lower < upper:
+        lower, upper = upper, lower
+
+
+
+    if width < 0:
+        x += width
+        width = abs(width)
+    if height < 0:
+        y += height
+        height = abs(height)
     # assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-        print(1)
+
 
 
 class GameUtils:
@@ -43,8 +63,9 @@ class GameUtils:
         return random.choice(MOOD_IDEAS)
 
     # crop PIL image from this class and outside classes
-    def crop_image_PIL(self, image, upper, top, right, lower):
-        cropped = image.crop((top, upper, right, lower))
+    def crop_image_PIL(self, image, left, upper, right, lower):
+        cropped = image.crop((left, upper, right, lower))
+
         return cropped
 
     # crop function
@@ -86,25 +107,19 @@ class GameUtils:
         for row in tile_matrix:
             for col in row:
                 # print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
-                assert (2 + 2 == 5, "Houston we've got a problem")
-                top = row_index * self.tile_size
+
+                left = row_index * self.tile_size
                 upper = col_index * self.tile_size
                 right = row_index * self.tile_size + self.tile_size
                 lower = col_index * self.tile_size + self.tile_size
-
-                validete_crop_size(self.image.width, self.image.height, self.tile_size, (top, upper, right, lower))
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+                print('left {} upper {} right {} lower {}'.format(str(left), str(upper), str(right), str(lower)))
+                validete_crop_size(self.image.width, self.image.height, self.tile_size, *(left, upper, right, lower))
+                print('row_index {} col_index {} counter {}'.format(str(row_index), str(col_index), str(counter)))
 
                 # print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
                 # print('counter {}'.format(str(counter)))
 
-                cropped = self.crop_image_PIL(self.image, top, upper, right, lower)
+                cropped = self.crop_image_PIL(self.image, left, upper, right, lower)
                 # convert to pygame image
                 mode = cropped.mode
                 size = cropped.size

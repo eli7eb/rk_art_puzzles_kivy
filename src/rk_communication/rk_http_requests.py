@@ -122,9 +122,9 @@ class GetArtImage:
             tmp_image = Image.open(requests.get(i['url'], stream=True).raw)
             tmp_x = i['x'] * GLOBAL_TILE_SIZE
             tmp_y = i['y'] * GLOBAL_TILE_SIZE
-            print('image w h')
-            print(final_image.width)
-            print(final_image.height)
+            #print('image w h')
+            #print(final_image.width)
+            #print(final_image.height)
             final_image.paste(tmp_image,(tmp_x,tmp_y))
 
         grid_image = final_image.resize((int(self.width), int(self.height)),Image.LANCZOS)
