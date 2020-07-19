@@ -14,8 +14,19 @@ SCREEN_SPACER_SIZE = 5
 # horizntally 3 top between grid and dashboard and bottom
 SCREEN_SPACER_NUMBER_VER = 3
 SCREEN_SPACER_NUMBER_HOR = 3
+
+
 # count number of spaces in grid is calculated as number of tiles horizontally -1
 # count number of spaces in grid is calculated as number of tiles vertically -1
+# function to validate the cropsize
+# values are first 2 are row,col on the left side
+# last 2 are bottom right on the right side
+# TODO if error exit game ? or find new image ?
+def validete_crop_size(image_width, image_height, tile_size, *values):
+    
+    # assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+        print(1)
+
 
 class GameUtils:
 
@@ -60,13 +71,13 @@ class GameUtils:
         # TODO this is for test - delete later
         grid = [[1] * 4 for n in range(6)]
 
-        tile_matrix = [[1]*w for n in range(h)]
+        tile_matrix = [[1] * w for n in range(h)]
         tile_matrix[0] = [0, 1, 2, 3]
         tile_matrix[1] = [4, 5, 6, 7]
-        tile_matrix[2] = [8,9,10,11]
-        tile_matrix[3] = [12,13,14,15]
-        tile_matrix[4] = [16,17,18,19]
-        tile_matrix[5] = [20,21,22,23]
+        tile_matrix[2] = [8, 9, 10, 11]
+        tile_matrix[3] = [12, 13, 14, 15]
+        tile_matrix[4] = [16, 17, 18, 19]
+        tile_matrix[5] = [20, 21, 22, 23]
 
         # row is y col is x
         row_index = 0
@@ -74,25 +85,26 @@ class GameUtils:
         counter = 0
         for row in tile_matrix:
             for col in row:
-                #print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
+                # print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
                 assert (2 + 2 == 5, "Houston we've got a problem")
-
-                assert((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
-                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
-
                 top = row_index * self.tile_size
                 upper = col_index * self.tile_size
                 right = row_index * self.tile_size + self.tile_size
                 lower = col_index * self.tile_size + self.tile_size
-                #print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
-                #print('counter {}'.format(str(counter)))
 
-                cropped = self.crop_image_PIL(self.image,top, upper, right, lower)
+                validete_crop_size(self.image.width, self.image.height, self.tile_size, (top, upper, right, lower))
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                # print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
+                # print('counter {}'.format(str(counter)))
+
+                cropped = self.crop_image_PIL(self.image, top, upper, right, lower)
                 # convert to pygame image
                 mode = cropped.mode
                 size = cropped.size
@@ -108,4 +120,3 @@ class GameUtils:
             col_index = 0
 
         return tile_matrix
-
