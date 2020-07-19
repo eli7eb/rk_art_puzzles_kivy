@@ -170,10 +170,38 @@ class GameView(View):
 
         print('end display tiles')
 
+    def generate_random_color(self):
+        start = 0
+        stop = 255
+
+        red = random.randint(start, stop)
+        green = random.randint(start, stop)
+        blue = random.randint(start, stop)
+        return pygame.Color(red, green, blue)
+
     # get 6 random tiles which are not yet displayed
     # display vertically
     # add mouse drag actions
-    def display_drag_tiles(self):
+    def display_test_tiles(self):
+        grid = self.tiles_grid # [[1] * 4 for n in range(6)]
+        x = 0
+        y = 0
+        w = 117
+        for row in grid:
+            for col in row:
+                # TODO rect x,w,w,h
+                display_tile = col.image
+                # TODO set the Tile object state
+                # tile.y = y
+                # tile.state = TILE_ON_BOARD_TEST
+                self.screen.blit(display_tile, (x, y))
+
+                # pygame.draw.rect(self.screen, self.generate_random_color(), [x,y,w, w])
+                pygame.display.update()
+                x = x + w
+            y = y + w
+            x = 0
+
         print()
 
     # display game dashboard
@@ -183,10 +211,14 @@ class GameView(View):
     def display_dash_board(self):
         print()
 
+    def display_drag_tiles(self):
+        print()
+
     def render(self):
         if self.level < LEVEL_MASTER:
             self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
+            #self.display_test_tiles()
             self.display_tiles()
             self.display_drag_tiles()
             self.display_dash_board()

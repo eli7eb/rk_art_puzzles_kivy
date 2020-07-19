@@ -30,6 +30,12 @@ class GameUtils:
 
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
+
+    # crop PIL image from this class and outside classes
+    def crop_image_PIL(self, image, upper, top, right, lower):
+        cropped = image.crop((top, upper, right, lower))
+        return cropped
+
     # crop function
     # Set the cropping area with box=(left, upper, right, lower).
     # an_array = [[1, 2], [3, 4]]
@@ -41,6 +47,7 @@ class GameUtils:
     # im_crop = im.crop((100, 75, 300, 150))
     # calculate # tiles : regular and level specific
     # calculate per col and per line
+    # validate that I am not out side the image size
 
     def crop_image_to_array(self, image):
         self.image = image
@@ -51,6 +58,8 @@ class GameUtils:
         h = int(SCREEN_HEIGHT // self.tile_size)
         # build matrix for tiles
         # TODO this is for test - delete later
+        grid = [[1] * 4 for n in range(6)]
+
         tile_matrix = [[1]*w for n in range(h)]
         tile_matrix[0] = [0, 1, 2, 3]
         tile_matrix[1] = [4, 5, 6, 7]
@@ -66,13 +75,24 @@ class GameUtils:
         for row in tile_matrix:
             for col in row:
                 #print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
+                assert (2 + 2 == 5, "Houston we've got a problem")
+
+                assert((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
+                assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+
                 top = row_index * self.tile_size
                 upper = col_index * self.tile_size
                 right = row_index * self.tile_size + self.tile_size
                 lower = col_index * self.tile_size + self.tile_size
                 #print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
                 #print('counter {}'.format(str(counter)))
-                cropped = self.image.crop((top, upper, right, lower))
+
+                cropped = self.crop_image_PIL(self.image,top, upper, right, lower)
                 # convert to pygame image
                 mode = cropped.mode
                 size = cropped.size
