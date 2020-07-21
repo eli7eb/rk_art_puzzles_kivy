@@ -156,13 +156,16 @@ class GameView(View):
                     row_spacer = SCREEN_SPACER_SIZE*col.row_index + SCREEN_SPACER_SIZE
                 row_pos = col.row_index*col.size + row_spacer
                 # col is one of 4 positions on grid
+
                 col_pos = col_positions[col.col_index]
+                x = col_pos
+                y = row_pos
                 display_tile = col.image
                 # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                self.screen.blit(display_tile, (row_pos, col_pos))
-                print('row {} col {}'.format(str(row_pos), str(col_pos)))
+                self.screen.blit(display_tile, (x, y))
+                print('row {} col {}'.format(str(x), str(y)))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 print('counter {}'.format(str(counter)))
                 counter += 1
@@ -183,20 +186,39 @@ class GameView(View):
     # display vertically
     # add mouse drag actions
     def display_test_tiles(self):
+        col_positions = [SCREEN_SPACER_SIZE,
+                         self.tile_size + 2 * SCREEN_SPACER_SIZE,
+                         2 * self.tile_size + 3 * SCREEN_SPACER_SIZE,
+                         3 * self.tile_size + 4 * SCREEN_SPACER_SIZE]
         grid = self.tiles_grid # [[1] * 4 for n in range(6)]
+
         x = 0
         y = 0
         w = 117
+        print('display_test_tiles')
         for row in grid:
             for col in row:
                 # TODO rect x,w,w,h
                 display_tile = col.image
+                if col.row_index == 0:
+                    row_spacer = SCREEN_SPACER_SIZE
+                elif col.row_index == 1:
+                    row_spacer = SCREEN_SPACER_SIZE*2
+                elif col.row_index == 2:
+                    row_spacer = SCREEN_SPACER_SIZE * 2 + SCREEN_SPACER_SIZE
+                else:
+                    row_spacer = SCREEN_SPACER_SIZE*col.row_index + SCREEN_SPACER_SIZE
+                row_pos = col.row_index*col.size + row_spacer
+                # col is one of 4 positions on grid
+                col_pos = col_positions[col.col_index]
                 # TODO set the Tile object state
+                x = col_pos
+                y = row_pos
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                self.screen.blit(display_tile, (x, y))
-
-                # pygame.draw.rect(self.screen, self.generate_random_color(), [x,y,w, w])
+                # self.screen.blit(display_tile, (x, y))
+                print('x {} y {}'.format(str(x), str(y)))
+                pygame.draw.rect(self.screen, self.generate_random_color(), [x,y,w, w])
                 pygame.display.update()
                 x = x + w
             y = y + w
@@ -220,7 +242,7 @@ class GameView(View):
         else:
             #self.display_test_tiles()
             self.display_tiles()
-            self.display_drag_tiles()
+            #self.display_drag_tiles()
             self.display_dash_board()
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         # pygame.display.flip()

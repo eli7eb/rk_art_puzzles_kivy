@@ -15,6 +15,8 @@ class SearchArt:
         for item in art_list:
             print('item {}'.format(item['title']))
             # print('w {} h {}'.format(str(item['webImage']['width']), str(item['webImage']['height'])))
+            if (item['webImage'] == None):
+                continue
             if mode == PORTRAIT and (item['webImage']['height'] > item['webImage']['width']):
                 returned_list.append(item)
             elif mode == LANDSCAPE and (item['webImage']['width'] > item['webImage']['height']):
