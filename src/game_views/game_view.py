@@ -157,9 +157,9 @@ class GameView(View):
                 row_pos = col.row_index*col.size + row_spacer
                 # col is one of 4 positions on grid
 
-                col_pos = col_positions[col.col_index]
-                x = col_pos
-                y = row_pos
+                #col_pos = col_positions[col.col_index]
+                y = col.x_pos
+                x = col.y_pos
                 display_tile = col.image
                 # TODO set the Tile object state
                 # tile.y = y

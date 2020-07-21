@@ -11,5 +11,5 @@ class Tile:
         self.row_index = row_index
         self.col_index = col_index
         self.state = state
-        self.x_pos = 0
-        self.y_pos = 0
+        self.x_pos = col_index
+        self.y_pos = row_index

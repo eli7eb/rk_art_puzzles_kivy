@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from src.game_consts.game_constants import *
 from src.ui_elements.grid_tile import Tile
 
@@ -46,6 +47,15 @@ def validete_crop_size(width, height, tile_size, *values):
         height = abs(height)
     # assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
 
+# from box and image size get the x y coodinates in the grid
+def getXYCoordinatesFromBox(box, tile_size):
+    print (box)
+    # find the middle point
+    x = box[0] + tile_size/2
+    y = box[1] + tile_size/2
+    x_index = int(x/tile_size)
+    y_index = int(y/tile_size)
+    return y_index, x_index
 
 
 class GameUtils:
@@ -80,6 +90,7 @@ class GameUtils:
     # calculate # tiles : regular and level specific
     # calculate per col and per line
     # validate that I am not out side the image size
+    # calculate where I am on the grid by dividing the box to the grid
 
     def crop_image_to_array(self, image):
         self.image = image
@@ -89,25 +100,19 @@ class GameUtils:
         # floor division
         h = int(SCREEN_HEIGHT // self.tile_size)
         # build matrix for tiles
-        # TODO this is for test - delete later
-        grid = [[1] * 4 for n in range(6)]
-
-        tile_matrix = [[1] * w for n in range(h)]
-        tile_matrix[0] = [0, 1, 2, 3]
-        tile_matrix[1] = [4, 5, 6, 7]
-        tile_matrix[2] = [8, 9, 10, 11]
-        tile_matrix[3] = [12, 13, 14, 15]
-        tile_matrix[4] = [16, 17, 18, 19]
-        tile_matrix[5] = [20, 21, 22, 23]
-
         width = int(self.image.width)
         height = int(self.image.height)
         chopsize = int(self.tile_size)
-        row_index = 0
-        col_index = 0
+
+        w_index = int(math.ceil(width/chopsize))
+        h_index = int(math.ceil(height/chopsize))
+        tile_matrix = [[1] * w_index for n in range(h_index)]
+        w_counter = 0
+        h_counter = 0
+        counter = 0
         infile = 'in.jpg'
-        for x0 in range(0, height, chopsize):
-            for y0 in range(0, width, chopsize):
+        for x0 in range(0, width, chopsize):
+            for y0 in range(0, height, chopsize):
                 box = (x0, y0,
                        x0 + chopsize if x0 + chopsize < width else width - 1,
                        y0 + chopsize if y0 + chopsize < height else height - 1)
@@ -120,15 +125,15 @@ class GameUtils:
                 #
                 py_image = pygame.image.fromstring(data, size, mode)
                 # position is set in game view when the tile is displayed
-
+                counter+=1
                 py_tile = Tile(py_image, self.tile_size, x0, y0, TILE_INVISIBLE)
-                if (row_index > 5 or col_index > 3):
+                if (h_index > 7 or w_index > 4):
                     print ('error')
-                tile_matrix[row_index][col_index] = py_tile
+                coords = getXYCoordinatesFromBox(box, self.tile_size)
+                tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-                col_index += 1
-            row_index += 1
-            col_index = 0
+
+
 
 
         # row is y col is x
