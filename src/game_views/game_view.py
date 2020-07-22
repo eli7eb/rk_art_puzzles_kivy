@@ -78,10 +78,10 @@ class GameView(View):
     # crop to tiles and resize them
 
     def getLoadedImage(self):
-        searchArtObj = SearchArt(self.mood_str)
-        art_dict = searchArtObj.getImageList()
-        getArtWorkObj = GetArtTiles(art_dict)
-        art_tiles_obj = getArtWorkObj.getArtImage()
+        search_art_obj = SearchArt(self.mood_str)
+        art_dict = search_art_obj.getImageList()
+        get_art_tiles = GetArtTiles(art_dict)
+        art_tiles_obj = get_art_tiles.getArtImage()
         art_image = GetArtImage(art_tiles_obj, self.game_utils.grid_width, self.game_utils.grid_height)
         pygame_image, pil_image = art_image.getBitmapFromTiles()
         return pygame_image, pil_image
@@ -146,26 +146,21 @@ class GameView(View):
         for row in self.tiles_grid:
             for col in row:
                 # row_index is screen spacer and tile size times row
-                if col.row_index == 0:
+                row_spacer = SCREEN_SPACER_SIZE * col.coords[1]
+                if row_spacer == 0:
                     row_spacer = SCREEN_SPACER_SIZE
-                elif col.row_index == 1:
-                    row_spacer = SCREEN_SPACER_SIZE*2
-                elif col.row_index == 2:
-                    row_spacer = SCREEN_SPACER_SIZE * 2 + SCREEN_SPACER_SIZE
-                else:
-                    row_spacer = SCREEN_SPACER_SIZE*col.row_index + SCREEN_SPACER_SIZE
-                row_pos = col.row_index*col.size + row_spacer
-                # col is one of 4 positions on grid
-
-                #col_pos = col_positions[col.col_index]
-                y = col.x_pos
-                x = col.y_pos
+                col_spacer = SCREEN_SPACER_SIZE * col.coords[0]
+                if col_spacer == 0:
+                    col_spacer = SCREEN_SPACER_SIZE
+                x = col.x_pos + row_spacer
+                y = col.y_pos + col_spacer
                 display_tile = col.image
                 # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                self.screen.blit(display_tile, (x, y))
-                print('row {} col {}'.format(str(x), str(y)))
+                print('y {} x {}'.format(str(y), str(x)))
+                self.screen.blit(display_tile, (y, x))
+
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 print('counter {}'.format(str(counter)))
                 counter += 1

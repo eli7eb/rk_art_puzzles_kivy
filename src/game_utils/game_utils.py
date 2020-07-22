@@ -47,6 +47,7 @@ def validete_crop_size(width, height, tile_size, *values):
         height = abs(height)
     # assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
 
+
 # from box and image size get the x y coodinates in the grid
 def getXYCoordinatesFromBox(box, tile_size):
     print (box)
@@ -126,10 +127,11 @@ class GameUtils:
                 py_image = pygame.image.fromstring(data, size, mode)
                 # position is set in game view when the tile is displayed
                 counter+=1
-                py_tile = Tile(py_image, self.tile_size, x0, y0, TILE_INVISIBLE)
                 if (h_index > 7 or w_index > 4):
                     print ('error')
                 coords = getXYCoordinatesFromBox(box, self.tile_size)
+                py_tile = Tile(py_image, self.tile_size, x0, y0, coords, TILE_INVISIBLE)
+
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
 
