@@ -12,6 +12,7 @@ from src.game_views.views import View
 from src.rk_communication.rk_http_requests import *
 from src.game_consts.game_constants import *
 from src.game_utils.game_utils import *
+from src.ui_elements.dash_board import DashBoard
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -68,13 +69,13 @@ class GameView(View):
         self.mood_str = None
         self.transitionToState = None
         self.screen = screen
-        self.game_utils = GameUtils()
+        self.game_utils = GameUtils(level)
         self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.dash_board_position = [0, 0]
         self.drag_tiles_position = [0, 0]
-
+        self.dashboard = DashBoard(self.screen, self.game_utils.grid_width, self.game_utils.grid_height, SCREEN_SPACER_SIZE)
         self.tile_size = None
         self.grid_size = None
         self.puzzle_image = None
@@ -91,18 +92,18 @@ class GameView(View):
         art_dict = search_art_obj.getImageList()
         get_art_tiles = GetArtTiles(art_dict)
         art_tiles_obj = get_art_tiles.getArtImage()
+        self.dashboard.set_title_info(art_dict)
         art_image = GetArtImage(art_tiles_obj, self.game_utils.grid_width, self.game_utils.grid_height)
         pygame_image, pil_image = art_image.getBitmapFromTiles()
         return pygame_image, pil_image
 
     # get image and tiles grid
-    def prepare(self, mood_str, level):
+    def prepare(self, mood_str):
         if mood_str == '':
             self.mood_str = self.game_utils.getRandomSearchValue()
         else:
             self.mood_str = mood_str
 
-        self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.dash_board_position = [4, 3]
@@ -150,12 +151,12 @@ class GameView(View):
         for row in self.tiles_grid:
             for col in row:
                 # row_index is screen spacer and tile size times row
-                print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
-                                                                 str(col.coords[1])))
+                #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
+                #                                                 str(col.coords[1])))
 
                 row_spacer = SCREEN_SPACER_SIZE * col.coords[0] + SCREEN_SPACER_SIZE
                 col_spacer = SCREEN_SPACER_SIZE * col.coords[1] + SCREEN_SPACER_SIZE
-                print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+                #print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
 
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
@@ -163,7 +164,7 @@ class GameView(View):
                 # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                print('y {} x {}'.format(str(y), str(x)))
+                #print('y {} x {}'.format(str(y), str(x)))
                 self.screen.blit(display_tile, (y, x))
 
                 # self.tiles_grid[col.y_index][col.x_index] = tile
@@ -184,7 +185,7 @@ class GameView(View):
                 # TODO rect x,w,w,h
                 x = col.x_pos
                 y = col.y_pos
-                print('x {} y {}'.format(str(x), str(y)))
+                #print('x {} y {}'.format(str(x), str(y)))
                 pygame.draw.rect(self.screen, self.generate_random_color(), [x,y,w, w])
                 pygame.display.update()
                 x = x + w

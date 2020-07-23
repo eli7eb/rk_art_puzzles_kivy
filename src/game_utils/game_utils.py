@@ -23,7 +23,7 @@ SCREEN_SPACER_NUMBER_HOR = 3
 # values are first 2 are row,col on the left side
 # last 2 are bottom right on the right side
 # TODO if error exit game ? or find new image ?
-def validete_crop_size(width, height, tile_size, *values):
+def validate_crop_size(width, height, tile_size, *values):
     x = 0
     y = 0
     left = values[0]
@@ -58,23 +58,25 @@ def getXYCoordinatesFromBox(box, tile_size):
 
 class GameUtils:
 
-    def __init__(self):
+    def __init__(self,  level):
         self.done = False
         self.image = None
-        # tile needs to fit in the screen 5 times in the horizontal directions with overheads
+        self.level = level
+        # tile needs to 4/6 fit horizontally in the screen by level and one spare for the drag tiles scroller
+        # vertically is 4/5 as we need space for the dashboard
         # at least 5 tiles across: 4 grid and one to drag
-        self.tile_size = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / 5
+        self.tile_size = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / (self.level.tiles_hor+1)
         self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE - self.tile_size
-        self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE
-
-    def getRandomSearchValue(self):
-        return random.choice(MOOD_IDEAS)
+        self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE - self.tile_size
 
     # crop PIL image from this class and outside classes
     def crop_image_PIL(self, image, left, upper, right, lower):
         cropped = image.crop((left, upper, right, lower))
 
         return cropped
+
+    def getRandomSearchValue(self):
+        return random.choice(MOOD_IDEAS)
 
     # crop function
     # Set the cropping area with box=(left, upper, right, lower).

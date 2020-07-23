@@ -50,7 +50,7 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 mood_str = ""
 
 views = { \
-    VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_SPLASH: TextView(screen, "RK games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
     VIEW_STATE_GAME_A: GameView(screen, level),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
@@ -83,7 +83,7 @@ while True:
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
         if currentViewId == VIEW_STATE_GAME_A:
-            currentViewState.prepare(mood_str, level)
+            currentViewState.prepare(mood_str)
         else:
             currentViewState.prepare()
 
@@ -91,7 +91,6 @@ while True:
 def main():
     run = True
     FPS = 60
-    level = LEVEL_CHAMPION
     lives = 5
     # make an object for all player info
     try_counter = 0
