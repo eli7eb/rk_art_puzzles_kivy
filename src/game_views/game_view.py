@@ -27,6 +27,16 @@ titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 FONT = pygame.font.Font(None, 32)
 
 
+def generate_random_color(self):
+    start = 0
+    stop = 255
+
+    red = random.randint(start, stop)
+    green = random.randint(start, stop)
+    blue = random.randint(start, stop)
+    return pygame.Color(red, green, blue)
+
+
 # main game loop
 # start in prepare function
 # by bringing the puzzle image in one image and as grid tiles
@@ -54,13 +64,12 @@ class GameView(View):
     centerY = HALF_SCREEN_HEIGHT
     grid_image = None
 
-    def __init__(self, screen, bg_color):
+    def __init__(self, screen, level):
         self.mood_str = None
         self.transitionToState = None
-        self.bg_color = bg_color
         self.screen = screen
         self.game_utils = GameUtils()
-        self.level = None
+        self.level = level
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.dash_board_position = [0, 0]
@@ -104,7 +113,7 @@ class GameView(View):
 
         self.puzzle_image, self.pil_image = self.getLoadedImage()
 
-        self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image)
+        self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image,self.level.tiles_hor,self.level.tiles_ver)
 
     def handleEvents(self):
 
@@ -132,11 +141,6 @@ class GameView(View):
         counter = 0
 
         print('rows {} cols  {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
-        # calculte the Y positions
-        col_positions = [SCREEN_SPACER_SIZE,
-                         self.tile_size + 2 * SCREEN_SPACER_SIZE,
-                         2 * self.tile_size + 3 * SCREEN_SPACER_SIZE,
-                         3 * self.tile_size + 4 * SCREEN_SPACER_SIZE]
         counter_col = 0
         # row is y col is x
         x = 0
@@ -146,12 +150,13 @@ class GameView(View):
         for row in self.tiles_grid:
             for col in row:
                 # row_index is screen spacer and tile size times row
-                row_spacer = SCREEN_SPACER_SIZE * col.coords[1]
-                if row_spacer == 0:
-                    row_spacer = SCREEN_SPACER_SIZE
-                col_spacer = SCREEN_SPACER_SIZE * col.coords[0]
-                if col_spacer == 0:
-                    col_spacer = SCREEN_SPACER_SIZE
+                print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
+                                                                 str(col.coords[1])))
+
+                row_spacer = SCREEN_SPACER_SIZE * col.coords[0] + SCREEN_SPACER_SIZE
+                col_spacer = SCREEN_SPACER_SIZE * col.coords[1] + SCREEN_SPACER_SIZE
+                print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
                 display_tile = col.image
@@ -162,29 +167,12 @@ class GameView(View):
                 self.screen.blit(display_tile, (y, x))
 
                 # self.tiles_grid[col.y_index][col.x_index] = tile
-                print('counter {}'.format(str(counter)))
                 counter += 1
-
-
-        print('end display tiles')
-
-    def generate_random_color(self):
-        start = 0
-        stop = 255
-
-        red = random.randint(start, stop)
-        green = random.randint(start, stop)
-        blue = random.randint(start, stop)
-        return pygame.Color(red, green, blue)
 
     # get 6 random tiles which are not yet displayed
     # display vertically
     # add mouse drag actions
     def display_test_tiles(self):
-        col_positions = [SCREEN_SPACER_SIZE,
-                         self.tile_size + 2 * SCREEN_SPACER_SIZE,
-                         2 * self.tile_size + 3 * SCREEN_SPACER_SIZE,
-                         3 * self.tile_size + 4 * SCREEN_SPACER_SIZE]
         grid = self.tiles_grid # [[1] * 4 for n in range(6)]
 
         x = 0
@@ -194,32 +182,14 @@ class GameView(View):
         for row in grid:
             for col in row:
                 # TODO rect x,w,w,h
-                display_tile = col.image
-                if col.row_index == 0:
-                    row_spacer = SCREEN_SPACER_SIZE
-                elif col.row_index == 1:
-                    row_spacer = SCREEN_SPACER_SIZE*2
-                elif col.row_index == 2:
-                    row_spacer = SCREEN_SPACER_SIZE * 2 + SCREEN_SPACER_SIZE
-                else:
-                    row_spacer = SCREEN_SPACER_SIZE*col.row_index + SCREEN_SPACER_SIZE
-                row_pos = col.row_index*col.size + row_spacer
-                # col is one of 4 positions on grid
-                col_pos = col_positions[col.col_index]
-                # TODO set the Tile object state
-                x = col_pos
-                y = row_pos
-                # tile.y = y
-                # tile.state = TILE_ON_BOARD_TEST
-                # self.screen.blit(display_tile, (x, y))
+                x = col.x_pos
+                y = col.y_pos
                 print('x {} y {}'.format(str(x), str(y)))
                 pygame.draw.rect(self.screen, self.generate_random_color(), [x,y,w, w])
                 pygame.display.update()
                 x = x + w
             y = y + w
             x = 0
-
-        print()
 
     # display game dashboard
     # time
@@ -232,8 +202,9 @@ class GameView(View):
         print()
 
     def render(self):
-        if self.level < LEVEL_MASTER:
-            self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
+        if self.level.id < LEVEL_MASTER:
+            self.display_tiles()
+            #self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
             #self.display_test_tiles()
             self.display_tiles()

@@ -36,9 +36,6 @@ def validete_crop_size(width, height, tile_size, *values):
 
     if lower < upper:
         lower, upper = upper, lower
-
-
-
     if width < 0:
         x += width
         width = abs(width)
@@ -93,11 +90,11 @@ class GameUtils:
     # validate that I am not out side the image size
     # calculate where I am on the grid by dividing the box to the grid
 
-    def crop_image_to_array(self, image):
+    def crop_image_to_array(self, image,tiles_hor,tiles_ver):
         self.image = image
 
         # TODO 4 tiles across depends on level
-        w = 4
+        w = tiles_hor
         # floor division
         h = int(SCREEN_HEIGHT // self.tile_size)
         # build matrix for tiles
@@ -119,56 +116,19 @@ class GameUtils:
                        y0 + chopsize if y0 + chopsize < height else height - 1)
                 print('box {}'.format(box))
                 cropped = image.crop(box)
-                cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
+                # test to save tiles
+                # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
                 mode = cropped.mode
                 size = cropped.size
                 data = cropped.tobytes()
                 #
                 py_image = pygame.image.fromstring(data, size, mode)
                 # position is set in game view when the tile is displayed
-                counter+=1
-                if (h_index > 7 or w_index > 4):
-                    print ('error')
+                counter += 1
                 coords = getXYCoordinatesFromBox(box, self.tile_size)
                 py_tile = Tile(py_image, self.tile_size, x0, y0, coords, TILE_INVISIBLE)
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-
-
-
-
-        # row is y col is x
-
-        # counter = 0
-        # for row in tile_matrix:
-        #     for col in row:
-        #         # print('x {} y {} value {}'.format(str(x), str(y), str(tile_matrix[x][y])))
-        #
-        #         left = row_index * self.tile_size
-        #         upper = col_index * self.tile_size
-        #         right = row_index * self.tile_size + self.tile_size
-        #         lower = col_index * self.tile_size + self.tile_size
-        #         print('left {} upper {} right {} lower {}'.format(str(left), str(upper), str(right), str(lower)))
-        #         validete_crop_size(self.image.width, self.image.height, self.tile_size, *(left, upper, right, lower))
-        #         print('row_index {} col_index {} counter {}'.format(str(row_index), str(col_index), str(counter)))
-        #
-        #         # print('top {} upper {} right {} lower {}'.format(str(top), str(upper), str(right), str(lower)))
-        #         # print('counter {}'.format(str(counter)))
-        #
-        #         cropped = self.crop_image_PIL(self.image, left, upper, right, lower)
-        #         # convert to pygame image
-        #         mode = cropped.mode
-        #         size = cropped.size
-        #         data = cropped.tobytes()
-        #         #
-        #         py_image = pygame.image.fromstring(data, size, mode)
-        #         # position is set in game view when the tile is displayed
-        #         py_tile = Tile(py_image, self.tile_size, row_index, col_index, TILE_INVISIBLE)
-        #         tile_matrix[row_index][col_index] = py_tile
-        #         counter += 1
-        #         col_index += 1
-        #     row_index += 1
-        #     col_index = 0
 
         return tile_matrix
