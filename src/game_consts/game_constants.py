@@ -2,6 +2,10 @@ from src.game_levels.game_level import Level
 
 
 # all level parameters are a calculation of LEVEL
+# log levels to write into the log file:
+# all print statement will go there
+# log has ID = level message and params
+LOG_LEVEL = 1
 
 TILE_ON_BOARD_TEST = 0
 TILE_INVISIBLE = 1

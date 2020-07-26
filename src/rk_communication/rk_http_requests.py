@@ -6,6 +6,9 @@ from random import randrange
 from src.game_consts.game_constants import PORTRAIT, LANDSCAPE
 GLOBAL_TILE_SIZE = 512
 
+# TODO add try catch for all interactions with the API
+# explained https://stackoverflow.com/questions/3193060/catch-specific-http-error-in-python
+
 
 class SearchArt:
 

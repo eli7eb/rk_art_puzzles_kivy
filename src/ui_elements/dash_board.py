@@ -23,7 +23,7 @@ class DashBoard:
         self.font = pygame.font.SysFont("comicsansmsttf", 40)
 
     # art_dict.title and art_dict.longTitle
-
+    # TODO set the title to fit in the correct space with new line - break the line
     def set_title_info(self, art_dict):
         self.font = pygame.font.SysFont("comicsansmsttf", 20)
         self.textSurfaceTitle = self.font.render(art_dict['title'], True, TEXT_COLOR)

@@ -4,6 +4,7 @@ import sys
 import time
 import random
 
+
 from src.game_consts.game_constants import LEVEL_BEGIN
 
 pygame.font.init()
@@ -14,6 +15,7 @@ from src.game_views.main_menu_view import MenuView
 from src.game_views.quit_view import QuitView
 from src.game_views.game_view import GameView
 from src.game_consts.game_constants import *
+from src.game_utils.game_logger import RkLogger
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -59,6 +61,14 @@ views = { \
     VIEW_STATE_QUIT: QuitView(screen,BACKGROUND_COLOR)
 }
 
+
+def init_logger():
+    logger = RkLogger.__call__().get_logger()
+    logger.info("Hello, Logger")
+    logger.debug("bug occured")
+
+
+init_logger()
 currentViewId = VIEW_STATE_SPLASH
 currentViewState = views[currentViewId]
 currentViewState.prepare()
@@ -87,7 +97,6 @@ while True:
         else:
             currentViewState.prepare()
 
-
 def main():
     run = True
     FPS = 60
@@ -97,7 +106,6 @@ def main():
     main_font = pygame.font.SysFont("comicsans", 50)
     lost_font = pygame.font.SysFont("comicsans", 60)
     clock = pygame.time.Clock()
-
     def redraw_window():
         # WIN.blit(BG, (0, 0))
         # draw text
@@ -168,7 +176,7 @@ def main():
 currentViewId = VIEW_STATE_SPLASH
 currentViewState = views[currentViewId]
 currentViewState.prepare()
-
+init_logger()
 print("Showing %s" % currentViewState)
 
 while True:
