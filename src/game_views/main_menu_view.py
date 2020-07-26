@@ -6,7 +6,7 @@ import random
 import pygame
 from pygame.locals import *
 from src.game_views.views import View
-
+from src.game_utils.game_logger import RkLogger
 VIEW_STATE_SPLASH = 0
 VIEW_STATE_MENU = 1
 VIEW_STATE_GAME_A = 2
@@ -54,7 +54,9 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    print(self.text)
+                    if self.text != '':
+                        logger = RkLogger.__call__().get_logger()
+                        logger.info("mood entered "+self.text)
                     # self.text = ''
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
@@ -114,13 +116,14 @@ class MenuView(View):
 
         events = pygame.event.get()
         for event in events:
-            print ("event type "+ str(event.type))
+            logger = RkLogger.__call__().get_logger()
+            logger.info("event type "+ str(event.type))
             if event.type == pygame.QUIT:
                 exit()
             # handle the text input first
             self.textinput.handle_event(event)
 
-            print("textinput '%s'" % self.textinput.text)
+            logger.info("textinput "+self.textinput.text)
 
             self.mood_str = self.textinput.text
             self.mood_str_1 = self.textinput.get_text()
@@ -135,8 +138,8 @@ class MenuView(View):
                     self.selectedItem = (self.selectedItem - 1) % len(self.menuItems)
                 if event.key == K_RETURN:
                     # check to see if there is anything in the text
-                    print("K_RETURN mood_str '%s'" % self.textinput.text)
-                    print("K_RETURN clicked menu item '%s'" % self.menuItems[self.selectedItem])
+                    logger.info("K_RETURN mood_str "+self.textinput.text)
+                    logger.info("K_RETURN clicked menu item "+self.menuItems[self.selectedItem])
                     # set loading message
                     self.loading_msg = 'LOADING ART'
                     self.transitionToState = self.MENU_ITEM_TO_VIEW_STATE[self.selectedItem]

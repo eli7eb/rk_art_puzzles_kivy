@@ -65,15 +65,13 @@ views = { \
 def init_logger():
     logger = RkLogger.__call__().get_logger()
     logger.info("Hello, Logger")
-    logger.debug("bug occured")
-
 
 init_logger()
 currentViewId = VIEW_STATE_SPLASH
 currentViewState = views[currentViewId]
 currentViewState.prepare()
-
-print("Showing %s" % currentViewState)
+logger = RkLogger.__call__().get_logger()
+logger.info("Showing %s" % currentViewState)
 
 while True:
 
@@ -85,7 +83,7 @@ while True:
 
     nextViewId = currentViewState.transition()
     if nextViewId:
-        print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
+        logger.info("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
         if currentViewId == VIEW_STATE_MENU:
             mood_str = currentViewState.textinput.get_text()
             currentViewState.clean()

@@ -4,6 +4,8 @@ import pygame
 from PIL import Image
 from random import randrange
 from src.game_consts.game_constants import PORTRAIT, LANDSCAPE
+from src.game_utils.game_logger import RkLogger
+
 GLOBAL_TILE_SIZE = 512
 
 # TODO add try catch for all interactions with the API
@@ -40,8 +42,13 @@ class SearchArt:
 
         query_params = {"q": self.search_value, "format": format_json, "object_type": rk_type_paint,
                        "material": rk_type_material}
+        try:
+            response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as err:  # This is the correct syntax
+            self.logger.error(err)
+            raise SystemExit(err)
 
-        response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
         if response.status_code == 200:
             print('success')
             print(response.text)
@@ -63,7 +70,7 @@ class SearchArt:
     def __init__(self, mood_str):
         self.currentState = None
         self.search_value = mood_str
-
+        self.logger = RkLogger.__call__().get_logger()
 
 class GetArtTiles:
     print('get the one')
@@ -71,6 +78,7 @@ class GetArtTiles:
     def __init__(self, art_dict):
         self.currentState = None
         self.art_dict = art_dict
+        self.logger = RkLogger.__call__().get_logger()
 
     def getArtImage(self):
         rk_api_token = 'aTcoXoCh'
@@ -88,15 +96,20 @@ class GetArtTiles:
 
         query_params = { "format": format_json }
 
-        response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
+        try:
+            response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            self.logger.error(err)
+            raise SystemExit(err)
         if response.status_code == 200:
-            print('success')
-            print(response.text)
+            self.logger.info('success')
+            self.logger.info(response.text)
             json_obj = json.loads(response.content.decode('utf-8'))
-            print(json_obj)
+            self.logger.info(json_obj)
             return (json_obj)
         else:
-            print ('error '+response.status_code + ' '+response.text)
+            self.logger.error ('error '+response.status_code + ' '+response.text)
 
 
 
@@ -107,6 +120,8 @@ class GetArtImage:
         self.art_obj = art_obj
         self.width = width
         self.height = height
+        self.logger = RkLogger.__call__().get_logger()
+
 
     # TODO add assert for error here
     def searchForLevel(self, image_levels):

@@ -13,6 +13,7 @@ from src.rk_communication.rk_http_requests import *
 from src.game_consts.game_constants import *
 from src.game_utils.game_utils import *
 from src.ui_elements.dash_board import DashBoard
+from src.game_utils.game_logger import RkLogger
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -80,7 +81,7 @@ class GameView(View):
         self.grid_size = None
         self.puzzle_image = None
         self.pil_image = None
-
+        self.logger = RkLogger.__call__().get_logger()
         self.tiles_grid = None
 
     # call the game utils to load the image from list of images returned
@@ -117,10 +118,9 @@ class GameView(View):
         self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image,self.level.tiles_hor,self.level.tiles_ver)
 
     def handleEvents(self):
-
         events = pygame.event.get()
         for event in events:
-            print("event type " + str(event.type))
+            self.logger.info("event type " + str(event.type))
             if event.type == pygame.QUIT:
                 exit()
             # handle the text input first
@@ -141,7 +141,7 @@ class GameView(View):
         # check for grid tiles
         counter = 0
 
-        print('rows {} cols  {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
+        self.logger.info('rows {} cols  {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
         counter_col = 0
         # row is y col is x
         x = 0

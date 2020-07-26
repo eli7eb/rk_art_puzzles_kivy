@@ -3,6 +3,7 @@ import random
 import math
 from src.game_consts.game_constants import *
 from src.ui_elements.grid_tile import Tile
+from src.game_utils.game_logger import RkLogger
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -47,7 +48,9 @@ def validate_crop_size(width, height, tile_size, *values):
 
 # from box and image size get the x y coodinates in the grid
 def getXYCoordinatesFromBox(box, tile_size):
-    print (box)
+    logger = RkLogger.__call__().get_logger()
+    logger.info("box {}".format(box))
+
     # find the middle point
     x = box[0] + tile_size/2
     y = box[1] + tile_size/2
@@ -116,7 +119,9 @@ class GameUtils:
                 box = (x0, y0,
                        x0 + chopsize if x0 + chopsize < width else width - 1,
                        y0 + chopsize if y0 + chopsize < height else height - 1)
-                print('box {}'.format(box))
+                logger = RkLogger.__call__().get_logger()
+                logger.info('box {}'.format(box))
+
                 cropped = image.crop(box)
                 # test to save tiles
                 # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
