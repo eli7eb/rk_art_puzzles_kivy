@@ -31,6 +31,12 @@ class DashBoard:
         self.textSurfaceLongTitle = self.font.render(art_dict['longTitle'], True, TEXT_COLOR)
         self.screen.blit(self.textSurfaceLongTitle, [self.spacer_size, self.text_pos_y + 50])
 
+    # play time tiles left to go
+    # how many moves till now
+    def set_play_time(self):
+        self.font = pygame.font.SysFont("comicsansmsttf", 20)
+        self.textSurfaceTitle = self.font.render('time and steps', True, TEXT_COLOR)
+        self.screen.blit(self.textSurfaceTitle, [self.spacer_size, self.text_pos_y + 70])
 # text_field_1 = TextField(90, 'TextField1')
 # text_field_2 = TextField(90, 'TextField2')
 # text_field_3 = TextField(90, 'TextField3')

@@ -23,6 +23,7 @@ class View:
     def __init__(self, screen):
         self.screen = screen
 
+        self.data = None
     # called when transitioning to this view
     def prepare(self):
         pass
@@ -185,9 +186,16 @@ while True:
     pygame.display.flip()
     pygame.time.delay(100)
 
+    # if nextViewId: print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
+    # data = currentViewState.data
+    # currentViewId = nextViewId
+    # currentViewState = views[currentViewId]
+    # currentViewState.prepare(data)
+
     nextViewId = currentViewState.transition()
     if nextViewId:
         print("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
         currentViewId = nextViewId
+        data = currentViewState.data
         currentViewState = views[currentViewId]
-        currentViewState.prepare()
+        currentViewState.prepare(data)

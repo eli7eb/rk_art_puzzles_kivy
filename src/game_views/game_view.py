@@ -57,6 +57,7 @@ def generate_random_color(self):
 # change of levels in options: you have set your level vs you have achieved your level
 # text into locale
 # number of tiles to drag is always number of rows
+firstTimeGrid = False
 
 class GameView(View):
     # Displays the main menu
@@ -83,6 +84,7 @@ class GameView(View):
         self.pil_image = None
         self.logger = RkLogger.__call__().get_logger()
         self.tiles_grid = None
+        self.drag_tiles_grid = None
 
     # call the game utils to load the image from list of images returned
     # resize image
@@ -97,6 +99,21 @@ class GameView(View):
         art_image = GetArtImage(art_tiles_obj, self.game_utils.grid_width, self.game_utils.grid_height)
         pygame_image, pil_image = art_image.getBitmapFromTiles()
         return pygame_image, pil_image
+
+    # create the drag grid
+    # init with random tiles
+    def init_drag_tiles(self):
+        total_grid_size = int(self.level['tiles_ver'])*int(self.level['tiles_hor'])
+        list_len = self.level['tiles_ver']
+        index = 0
+        list_index = random.sample(range(0, total_grid_size), int(self.level['tiles_ver']))
+        while index < list_len:
+
+            if len(self.drag_tiles_grid) == 0:
+                self.level['tiles_ver']
+        print()
+
+
 
     # get image and tiles grid
     def prepare(self, mood_str):
@@ -116,6 +133,7 @@ class GameView(View):
         self.puzzle_image, self.pil_image = self.getLoadedImage()
 
         self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image,self.level.tiles_hor,self.level.tiles_ver)
+        # self.tiles_drag_grid = self.init_drag_tiles()
 
     def handleEvents(self):
         events = pygame.event.get()
@@ -160,13 +178,15 @@ class GameView(View):
 
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
-                display_tile = col.image
+                # if (y % 2 == 0):
+                #     display_tile = col.image
+                # else:
+                display_tile = col.transparant_image
                 # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
                 #print('y {} x {}'.format(str(y), str(x)))
                 self.screen.blit(display_tile, (y, x))
-
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 counter += 1
 
@@ -199,6 +219,11 @@ class GameView(View):
     def display_dash_board(self):
         print()
 
+    # start from random number of vertical tiles
+    # get random
+    # when one is placed on grid : de count
+    # get a random from what is left by state of tile
+    #
     def display_drag_tiles(self):
         print()
 
@@ -210,7 +235,9 @@ class GameView(View):
             #self.display_test_tiles()
             self.display_tiles()
             #self.display_drag_tiles()
-            self.display_dash_board()
+        self.display_dash_board()
+        self.display_drag_tiles()
+
         # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
         # pygame.display.flip()
 

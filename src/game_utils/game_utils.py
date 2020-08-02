@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import PIL
 from src.game_consts.game_constants import *
 from src.ui_elements.grid_tile import Tile
 from src.game_utils.game_logger import RkLogger
@@ -130,10 +131,18 @@ class GameUtils:
                 data = cropped.tobytes()
                 #
                 py_image = pygame.image.fromstring(data, size, mode)
+                py_image_rgba = cropped.copy()
+                py_image_rgba.putalpha(128)
+
+                mode_t = py_image_rgba.mode
+                size_t = py_image_rgba.size
+                data_t = py_image_rgba.tobytes()
+                py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
                 # position is set in game view when the tile is displayed
                 counter += 1
                 coords = getXYCoordinatesFromBox(box, self.tile_size)
-                py_tile = Tile(py_image, self.tile_size, x0, y0, coords, TILE_INVISIBLE)
+
+                py_tile = Tile(py_image, py_image_t, self.tile_size, x0, y0, coords, TILE_INVISIBLE)
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
