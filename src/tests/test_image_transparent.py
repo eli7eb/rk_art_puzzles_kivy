@@ -28,7 +28,7 @@ def show_image(x, y):
 def show_image_transparant(x, y):
     img = Image.open("rk_background.png")
     img = img.convert('RGBA')
-    #img = img.resize(SCREEN_WIDTH, SCREEN_HEIGHT, Image.LANCZOS)
+    img = img.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
     data = img.getdata()  # you'll get a list of tuples
     newData = []
     for a in data:

@@ -45,6 +45,9 @@ class SearchArt:
         try:
             response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
             response.raise_for_status()
+        except requests.exceptions.ConnectionError as c_err:
+            self.logger.error(c_err)
+            raise SystemExit(c_err)
         except requests.exceptions.HTTPError as err:  # This is the correct syntax
             self.logger.error(err)
             raise SystemExit(err)
@@ -99,6 +102,9 @@ class GetArtTiles:
         try:
             response = requests.request("GET", rk_api_url_base_prefix, headers=headers, params=query_params)
             response.raise_for_status()
+        except requests.exceptions.ConnectionError as c_err:
+            self.logger.error(c_err)
+            raise SystemExit(c_err)
         except requests.exceptions.HTTPError as err:
             self.logger.error(err)
             raise SystemExit(err)

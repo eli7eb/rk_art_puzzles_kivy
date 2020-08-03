@@ -6,7 +6,9 @@
 # get user mood or not
 # return will lead to load image interstate menu
 
+import os, os.path
 import pygame
+from pathlib import Path
 from pygame.locals import *
 from src.game_views.views import View
 from src.rk_communication.rk_http_requests import *
@@ -89,16 +91,41 @@ class GameView(View):
     # call the game utils to load the image from list of images returned
     # resize image
     # crop to tiles and resize them
-
+    # 2 modes remote and locally when I need to test
     def getLoadedImage(self):
-        search_art_obj = SearchArt(self.mood_str)
-        art_dict = search_art_obj.getImageList()
-        get_art_tiles = GetArtTiles(art_dict)
-        art_tiles_obj = get_art_tiles.getArtImage()
-        self.dashboard.set_title_info(art_dict)
-        art_image = GetArtImage(art_tiles_obj, self.game_utils.grid_width, self.game_utils.grid_height)
-        pygame_image, pil_image = art_image.getBitmapFromTiles()
-        return pygame_image, pil_image
+        remote = False
+        if remote:
+            search_art_obj = SearchArt(self.mood_str)
+            # get a list of art works for this mood
+            art_dict = search_art_obj.getImageList()
+            # get one art piece
+            get_art_tiles = GetArtTiles(art_dict)
+
+            art_tiles_obj = get_art_tiles.getArtImage()
+            self.dashboard.set_title_info(art_dict)
+            art_image = GetArtImage(art_tiles_obj, self.game_utils.grid_width, self.game_utils.grid_height)
+            pygame_image, pil_image = art_image.getBitmapFromTiles()
+            return pygame_image, pil_image
+        else:
+            base_path = Path(__file__).parent.resolve()
+            file_path = (base_path / "../assets/rk_background.png").resolve()
+            local_pil_image = Image.open(file_path)
+
+            local_pil_image = local_pil_image.convert('RGBA')
+            local_pil_image = local_pil_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+            data = local_pil_image.getdata()  # you'll get a list of tuples
+            newData = []
+            for a in data:
+                a = a[:3]  # you'll get your tuple shorten to RGB
+                a = a + (100,)  # change the 100 to any transparency number you like between (0,255)
+                newData.append(a)
+            local_pil_image.putdata(newData)  # you'll get your new img ready
+            #img.save("bg_trans.png")
+            mode = local_pil_image.mode
+            size = local_pil_image.size
+            data = local_pil_image.tobytes()
+            local_pygame_image = pygame.image.fromstring(data, size, mode)
+            return local_pygame_image, local_pil_image
 
     # create the drag grid
     # init with random tiles
@@ -178,11 +205,11 @@ class GameView(View):
 
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
-                # if (y % 2 == 0):
-                #     display_tile = col.image
-                # else:
-                display_tile = col.transparant_image
-                # TODO set the Tile object state
+                if (y % 2 == 0):
+                     display_tile = col.image
+                else:
+                     display_tile = col.transparant_image
+                # # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
                 #print('y {} x {}'.format(str(y), str(x)))

@@ -1,7 +1,9 @@
 import pygame
 import random
 import math
-import PIL
+
+from PIL import Image
+
 from src.game_consts.game_constants import *
 from src.ui_elements.grid_tile import Tile
 from src.game_utils.game_logger import RkLogger
@@ -95,7 +97,7 @@ class GameUtils:
     # calculate per col and per line
     # validate that I am not out side the image size
     # calculate where I am on the grid by dividing the box to the grid
-
+    # create the tile object with image and image_transparent
     def crop_image_to_array(self, image,tiles_hor,tiles_ver):
         self.image = image
 
@@ -124,19 +126,28 @@ class GameUtils:
                 logger.info('box {}'.format(box))
 
                 cropped = image.crop(box)
-                # test to save tiles
-                # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
                 mode = cropped.mode
                 size = cropped.size
                 data = cropped.tobytes()
-                #
                 py_image = pygame.image.fromstring(data, size, mode)
-                py_image_rgba = cropped.copy()
-                py_image_rgba.putalpha(128)
 
-                mode_t = py_image_rgba.mode
-                size_t = py_image_rgba.size
-                data_t = py_image_rgba.tobytes()
+                # PIL for transparant copy
+                pil_image_rgba = cropped.copy()
+                # test to save tiles
+                # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
+
+                pil_image_rgba = pil_image_rgba.convert('RGBA')
+                #pil_image_rgba = pil_image_rgba.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+                data = pil_image_rgba.getdata()  # you'll get a list of tuples
+                newData = []
+                for a in data:
+                    a = a[:3]  # you'll get your tuple shorten to RGB
+                    a = a + (100,)  # change the 100 to any transparency number you like between (0,255)
+                    newData.append(a)
+                pil_image_rgba.putdata(newData)  # you'll get your new img ready
+                mode_t = pil_image_rgba.mode
+                size_t = pil_image_rgba.size
+                data_t = pil_image_rgba.tobytes()
                 py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
                 # position is set in game view when the tile is displayed
                 counter += 1
