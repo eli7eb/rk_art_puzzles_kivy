@@ -142,7 +142,7 @@ class GameUtils:
                 newData = []
                 for a in data:
                     a = a[:3]  # you'll get your tuple shorten to RGB
-                    a = a + (100,)  # change the 100 to any transparency number you like between (0,255)
+                    a = a + (128,)  # change the 100 to any transparency number you like between (0,255)
                     newData.append(a)
                 pil_image_rgba.putdata(newData)  # you'll get your new img ready
                 mode_t = pil_image_rgba.mode

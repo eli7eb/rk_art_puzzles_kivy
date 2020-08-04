@@ -87,6 +87,7 @@ class GameView(View):
         self.logger = RkLogger.__call__().get_logger()
         self.tiles_grid = None
         self.drag_tiles_grid = None
+        self.tiles_to_show = None
 
     # call the game utils to load the image from list of images returned
     # resize image
@@ -120,7 +121,6 @@ class GameView(View):
                 a = a + (100,)  # change the 100 to any transparency number you like between (0,255)
                 newData.append(a)
             local_pil_image.putdata(newData)  # you'll get your new img ready
-            #img.save("bg_trans.png")
             mode = local_pil_image.mode
             size = local_pil_image.size
             data = local_pil_image.tobytes()
@@ -161,6 +161,12 @@ class GameView(View):
 
         self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image,self.level.tiles_hor,self.level.tiles_ver)
         # self.tiles_drag_grid = self.init_drag_tiles()
+        total_size = len(self.tiles_grid) * len(self.tiles_grid[0])
+        # number oh shown tiles is floor fifth og the whole
+        number_tiles_displayed = int(total_size / 5)
+
+        list_to_random = list(range(0, total_size))
+        self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
 
     def handleEvents(self):
         events = pygame.event.get()
@@ -206,7 +212,7 @@ class GameView(View):
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
                 if (y % 2 == 0):
-                     display_tile = col.image
+                     display_tile = col.transparant_image
                 else:
                      display_tile = col.transparant_image
                 # # TODO set the Tile object state
@@ -216,6 +222,43 @@ class GameView(View):
                 self.screen.blit(display_tile, (y, x))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 counter += 1
+
+    # display only number of tiles as hints
+    # get the number then get a set of random locations on grid to display
+    # update the tile grid with tile status for these tiles
+    def display_tiles_by_level(self):
+        # check for grid tiles
+        counter = 0
+        print('')
+        counter_col = 0
+        # row is y col is x
+        x = 0
+        y = 0
+        counter = 0
+
+        for row in self.tiles_grid:
+            for col in row:
+                # row_index is screen spacer and tile size times row
+                #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
+                #                                                 str(col.coords[1])))
+
+                row_spacer = SCREEN_SPACER_SIZE * col.coords[0] + SCREEN_SPACER_SIZE
+                col_spacer = SCREEN_SPACER_SIZE * col.coords[1] + SCREEN_SPACER_SIZE
+                #print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+
+                x = col.x_pos + row_spacer
+                y = col.y_pos + col_spacer
+                if counter in self.tiles_to_show:
+                    display_tile = col.image
+                    self.screen.blit(display_tile, (y, x))
+                # # TODO set the Tile object state
+                # tile.y = y
+                # tile.state = TILE_ON_BOARD_TEST
+                #print('y {} x {}'.format(str(y), str(x)))
+
+                # self.tiles_grid[col.y_index][col.x_index] = tile
+                counter += 1
+
 
     # get 6 random tiles which are not yet displayed
     # display vertically
@@ -256,11 +299,11 @@ class GameView(View):
 
     def render(self):
         if self.level.id < LEVEL_MASTER:
-            self.display_tiles()
+            self.display_tiles_by_level()
             #self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
             #self.display_test_tiles()
-            self.display_tiles()
+            self.display_tiles_by_level()
             #self.display_drag_tiles()
         self.display_dash_board()
         self.display_drag_tiles()
