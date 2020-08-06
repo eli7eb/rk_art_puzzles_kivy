@@ -19,8 +19,6 @@ from src.game_utils.game_logger import RkLogger
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
-HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
-HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
 SCREEN_SPACER_SIZE = 5
 # how many spacers vertical and horizontal
@@ -29,7 +27,6 @@ SCREEN_SPACER_NUMBER_HOR = 2
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 FONT = pygame.font.Font(None, 32)
-
 
 def generate_random_color(self):
     start = 0
@@ -45,6 +42,7 @@ def generate_random_color(self):
 # start in prepare function
 # by bringing the puzzle image in one image and as grid tiles
 # by level decide how and if to display it
+# set the tile size
 # implement drag and drop function
 # implement game dashboard: score, time, number of tiles left etc
 # dash board also has mood str and the RK result
@@ -62,12 +60,6 @@ def generate_random_color(self):
 firstTimeGrid = False
 
 class GameView(View):
-    # Displays the main menu
-
-    titleText = "RK_PUZZLES_GAME"
-    centerX = HALF_SCREEN_WIDTH
-    centerY = HALF_SCREEN_HEIGHT
-    grid_image = None
 
     def __init__(self, screen, level):
         self.mood_str = None
@@ -80,7 +72,6 @@ class GameView(View):
         self.dash_board_position = [0, 0]
         self.drag_tiles_position = [0, 0]
         self.dashboard = DashBoard(self.screen, self.game_utils.grid_width, self.game_utils.grid_height, SCREEN_SPACER_SIZE)
-        self.tile_size = None
         self.grid_size = None
         self.puzzle_image = None
         self.pil_image = None
@@ -94,7 +85,7 @@ class GameView(View):
     # crop to tiles and resize them
     # 2 modes remote and locally when I need to test
     def getLoadedImage(self):
-        remote = False
+        remote = True
         if remote:
             search_art_obj = SearchArt(self.mood_str)
             # get a list of art works for this mood
@@ -154,7 +145,6 @@ class GameView(View):
         self.dash_board_position = [4, 3]
         self.drag_tiles_position = [4, 3]
 
-        self.tile_size = self.game_utils.tile_size
         self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
 
         self.puzzle_image, self.pil_image = self.getLoadedImage()
@@ -164,14 +154,37 @@ class GameView(View):
         total_size = len(self.tiles_grid) * len(self.tiles_grid[0])
         # number oh shown tiles is floor fifth og the whole
         number_tiles_displayed = int(total_size / 5)
-
         list_to_random = list(range(0, total_size))
         self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
+        self.draw_grid()
+
+    # draw grid of rects around the tiles
+    # last row is not the same size as the previous TODO fix it
+    def draw_grid(self):
+        width = len(self.tiles_grid[0])
+        height = len(self.tiles_grid)
+        block_size = self.game_utils.tile_size
+        grid_color = generate_random_color(self)
+        #self.logger.info("draw_grid width {} height {}".format(str(width),str(height)))
+
+        for y in range(height):
+            for x in range(width):
+                row_spacer = SCREEN_SPACER_SIZE * y + SCREEN_SPACER_SIZE
+                col_spacer = SCREEN_SPACER_SIZE * x + SCREEN_SPACER_SIZE
+                # print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+
+                x_pos = x * block_size + col_spacer
+                y_pos = y * block_size + row_spacer
+
+                rect = pygame.Rect(x_pos, y_pos, block_size, block_size)
+                #self.logger.info("y {} x {} ".format(str(y_pos),str(x_pos)))
+                pygame.draw.rect(self.screen, grid_color, rect,SCREEN_SPACER_SIZE)
+
 
     def handleEvents(self):
         events = pygame.event.get()
         for event in events:
-            self.logger.info("event type " + str(event.type))
+            #self.logger.info("event type " + str(event.type))
             if event.type == pygame.QUIT:
                 exit()
             # handle the text input first
@@ -211,6 +224,8 @@ class GameView(View):
 
                 x = col.x_pos + row_spacer
                 y = col.y_pos + col_spacer
+                self.logger.info('y {} x {}'.format(str(y), str(x)))
+
                 if (y % 2 == 0):
                      display_tile = col.transparant_image
                 else:
@@ -299,17 +314,14 @@ class GameView(View):
 
     def render(self):
         if self.level.id < LEVEL_MASTER:
-            self.display_tiles_by_level()
+            self.display_tiles()
             #self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
             #self.display_test_tiles()
-            self.display_tiles_by_level()
+            self.display_tiles()
             #self.display_drag_tiles()
         self.display_dash_board()
         self.display_drag_tiles()
-
-        # self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-        # pygame.display.flip()
 
     def transition(self):
         return self.transitionToState

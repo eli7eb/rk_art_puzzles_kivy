@@ -153,6 +153,13 @@ class GetArtImage:
             #print(final_image.height)
             final_image.paste(tmp_image,(tmp_x,tmp_y))
 
+        # I have the final image: 2 considerations:
+        # need to resize and keep aspect ratio - i have a maximum of size I can use
+        # the width is setting the size of the resizing
+        # the height sets the number and size of each tile
+        # need to resize so that tile size is going to fit
+
+
         grid_image = final_image.resize((int(self.width), int(self.height)),Image.LANCZOS)
         mode = grid_image.mode
         size = grid_image.size

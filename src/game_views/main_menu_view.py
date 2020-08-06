@@ -19,7 +19,11 @@ SCREEN_HEIGHT = 800
 HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
-
+# display main menu and background
+# let the user enter the mood or hit enter for random
+# move to game view
+# TODO options menu to let the user play with time limit or steps limit
+# TODO about menu with links
 
 # Background
 BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -147,11 +151,7 @@ class MenuView(View):
     def renderMenuItems(self, screen, selectedItem):
         index = 0
 
-        # screen = pygame.display.set_mode((1000, 200))
         clock = pygame.time.Clock()
-
-        # Blit its surface onto the screen
-        # Create TextInput-object
 
 
         for menuItemText in self.menuItems:

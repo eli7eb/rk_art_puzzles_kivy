@@ -71,7 +71,10 @@ class GameUtils:
         # tile needs to 4/6 fit horizontally in the screen by level and one spare for the drag tiles scroller
         # vertically is 4/5 as we need space for the dashboard
         # at least 5 tiles across: 4 grid and one to drag
-        self.tile_size = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / (self.level.tiles_hor+1)
+
+        tile_size_ver = (SCREEN_HEIGHT - SCREEN_HEIGHT/5 - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE) / (self.level.tiles_ver)
+        tile_size_hor = (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / (self.level.tiles_hor+1)
+        self.tile_size = tile_size_ver # (SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE) / (self.level.tiles_hor+1)
         self.grid_width = SCREEN_WIDTH - SCREEN_SPACER_NUMBER_HOR * SCREEN_SPACER_SIZE - self.tile_size
         self.grid_height = SCREEN_HEIGHT - SCREEN_SPACER_NUMBER_VER * SCREEN_SPACER_SIZE - self.tile_size
 
@@ -83,6 +86,28 @@ class GameUtils:
 
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
+
+    def fit_aquares(self):
+        print()
+        im_pth = "rk_background.png"
+        # img = Image.open("rk_background.png")
+        im = Image.open(im_pth)
+        n = 12
+
+        im = im.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+        width = im.width
+        height = im.height
+        px = math.ceil(math.sqrt(n * width / height))
+        if math.floor(px * height / width) * px < n:
+            sx = height / math.ceil(px * y / x)
+        else:
+            sx = width / px
+        py = math.ceil(math.sqrt(n * height / width))
+        if math.floor(py * width / height) * py < n:
+            sy = width / math.ceil((width * py / height))
+        else:
+            sy = height / py
+        return math.max(sx, sy)
 
     # crop function
     # Set the cropping area with box=(left, upper, right, lower).
@@ -104,7 +129,8 @@ class GameUtils:
         # TODO 4 tiles across depends on level
         w = tiles_hor
         # floor division
-        h = int(SCREEN_HEIGHT // self.tile_size)
+        h = tiles_ver
+        int(SCREEN_HEIGHT // self.tile_size)
         # build matrix for tiles
         width = int(self.image.width)
         height = int(self.image.height)

@@ -33,4 +33,4 @@ levels = { \
 PORTRAIT = 'portrait'
 LANDSCAPE = 'landscape'
 
-MOOD_IDEAS = ['art', 'spring', 'summer', 'winter', 'cat', 'dog', 'farm', 'king', 'prince', 'happy', 'castle', 'bread', 'flower', 'war', 'library']
+MOOD_IDEAS = ['lion', 'glass', 'book', 'money', 'chair', 'garden', 'flower', 'tree', 'snow', 'carpet', 'wall', 'art', 'spring', 'summer', 'winter', 'cat', 'dog', 'farm', 'king', 'prince', 'happy', 'castle', 'bread', 'flower', 'war', 'library']
