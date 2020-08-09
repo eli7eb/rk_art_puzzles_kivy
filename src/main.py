@@ -9,7 +9,7 @@ from src.game_consts.game_constants import LEVEL_BEGIN
 
 pygame.font.init()
 from pygame.locals import *
-
+from src.game_views.load_resource_view import LoadingView
 from src.game_views.text_view import TextView
 from src.game_views.main_menu_view import MenuView
 from src.game_views.quit_view import QuitView
@@ -42,11 +42,12 @@ HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 
 VIEW_STATE_SPLASH = 0
 VIEW_STATE_MENU = 1
-VIEW_STATE_GAME_A = 2
-VIEW_STATE_GAME_B = 3
-VIEW_STATE_OPTIONS = 4
-VIEW_STATE_QUITTING = 5
-VIEW_STATE_QUIT = 6
+VIEW_STATE_LOADING = 2
+VIEW_STATE_GAME_A = 3
+VIEW_STATE_GAME_B = 4
+VIEW_STATE_OPTIONS = 5
+VIEW_STATE_QUITTING = 6
+VIEW_STATE_QUIT = 7
 
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 mood_str = ""
@@ -54,6 +55,7 @@ mood_str = ""
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "RK games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
+    VIEW_STATE_LOADING: LoadingView(screen, BACKGROUND_COLOR, level),
     VIEW_STATE_GAME_A: GameView(screen, level),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
@@ -87,11 +89,16 @@ while True:
         if currentViewId == VIEW_STATE_MENU:
             mood_str = currentViewState.textinput.get_text()
             currentViewState.clean()
+        elif currentViewId == VIEW_STATE_LOADING:
+            image_data = currentViewState.get_image_data()
+
 
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
-        if currentViewId == VIEW_STATE_GAME_A:
-            currentViewState.prepare(mood_str)
+        if currentViewId == VIEW_STATE_LOADING:
+            currentViewState.prepare(mood_str,level)
+        elif currentViewId == VIEW_STATE_GAME_A:
+            currentViewState.prepare(image_data)
         else:
             currentViewState.prepare()
 

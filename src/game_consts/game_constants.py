@@ -6,7 +6,7 @@ from src.game_levels.game_level import Level
 # all print statement will go there
 # log has ID = level message and params
 LOG_LEVEL = 1
-
+SCREEN_SPACER_SIZE = 5
 TILE_ON_BOARD_TEST = 0
 TILE_INVISIBLE = 1
 TILE_IN_TILES_BANK = 2

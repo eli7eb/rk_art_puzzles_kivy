@@ -170,8 +170,9 @@ def get_xy_from_counter(tiles_grid,counter):
     cols = len(tiles_grid[0])
     total = rows*cols
 
-    row,col = divmod(total,counter)
-    return row,col
+    row,col = divmod(counter,cols)
+
+    return row*tile_tuple[0]+1,col*tile_tuple[0]+1
 
 def display_tiles(tiles_grid):
     # check for grid tiles
@@ -197,9 +198,9 @@ def display_tiles(tiles_grid):
             # # TODO set the Tile object state
             # tile.y = y
             # tile.state = TILE_ON_BOARD_TEST
-            #print('y {} x {}'.format(str(y), str(x)))
+            print('y {} x {}'.format(str(y), str(x)))
             py_image = col
-            gameDisplay.blit(py_image, (0, 0))
+            gameDisplay.blit(py_image, (y, x))
             # self.tiles_grid[col.y_index][col.x_index] = tile
             counter += 1
 
