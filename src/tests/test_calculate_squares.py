@@ -5,6 +5,7 @@ from PIL import Image
 pygame.init()
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
+SCREEN_SPACER_SIZE = 5
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('test transparent')
@@ -19,14 +20,17 @@ def show_image(x, y):
     im = pygame.transform.scale(pygame.image.load("rk_background.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
     gameDisplay.blit(im, (x, y))
 
+def image_resize(im):
+    im = im.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+    return im
+
 def fit_squares(im, num_tiles):
     print()
 
     n = num_tiles
-
-    im = im.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
     width = im.width
     height = im.height
+
     px = math.ceil(math.sqrt(n*width/height))
     if math.floor(px*height/width)*px < n:
         sx = height/math.ceil(px*height/width)
@@ -39,10 +43,10 @@ def fit_squares(im, num_tiles):
         sy = height/py
     # TODO get the number of cols and rows by deviding the width/size and height/size
     # return all as tuple
-    size = max(sx,sy)
+    size = int(max(sx,sy))
     num_cols = int(width/size)
     num_rows = int(height/size)
-    return math.max(sx,sy)
+    return (size,num_cols,num_rows)
 
 def show_image_resize(x,y):
     desired_size = 468
@@ -109,7 +113,7 @@ def show_image_transparant(x, y):
     gameDisplay.blit(py_image, (x, y))
 
 def getXYCoordinatesFromBox(box, tile_size):
-    print("box {}".format(box))
+    #print("box {}".format(box))
     # find the middle point
     x = box[0] + tile_size/2
     y = box[1] + tile_size/2
@@ -117,24 +121,19 @@ def getXYCoordinatesFromBox(box, tile_size):
     y_index = int(y/tile_size)
     return y_index, x_index
 
-def crop_image_to_array(self, image,tiles_hor,tiles_ver):
-    self.image = image
+def crop_image_to_array(image,tile_tuple):
+
 
     # TODO 4 tiles across depends on level
-    w = tiles_hor
-    # floor division
-    h = tiles_ver
-    int(SCREEN_HEIGHT // self.tile_size)
     # build matrix for tiles
-    width = int(self.image.width)
-    height = int(self.image.height)
-    chopsize = int(self.tile_size)
+    width = int(image.width)
+    height = int(image.height)
+    chopsize = tile_tuple[0]
 
-    w_index = int(math.ceil(width/chopsize))
-    h_index = int(math.ceil(height/chopsize))
+    w_index = int(math.ceil(width / chopsize))
+    h_index = int(math.ceil(height / chopsize))
     tile_matrix = [[1] * w_index for n in range(h_index)]
-    w_counter = 0
-    h_counter = 0
+
     counter = 0
     infile = 'in.jpg'
     for x0 in range(0, width, chopsize):
@@ -142,7 +141,7 @@ def crop_image_to_array(self, image,tiles_hor,tiles_ver):
             box = (x0, y0,
                    x0 + chopsize if x0 + chopsize < width else width - 1,
                    y0 + chopsize if y0 + chopsize < height else height - 1)
-            print('box {}'.format(box))
+            #print('box {}'.format(box))
 
             cropped = image.crop(box)
             mode = cropped.mode
@@ -150,42 +149,75 @@ def crop_image_to_array(self, image,tiles_hor,tiles_ver):
             data = cropped.tobytes()
             py_image = pygame.image.fromstring(data, size, mode)
 
-            # PIL for transparant copy
-            pil_image_rgba = cropped.copy()
-            # test to save tiles
-            # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-
-            pil_image_rgba = pil_image_rgba.convert('RGBA')
-            #pil_image_rgba = pil_image_rgba.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
-            data = pil_image_rgba.getdata()  # you'll get a list of tuples
-            newData = []
-            for a in data:
-                a = a[:3]  # you'll get your tuple shorten to RGB
-                a = a + (128,)  # change the 100 to any transparency number you like between (0,255)
-                newData.append(a)
-            pil_image_rgba.putdata(newData)  # you'll get your new img ready
-            mode_t = pil_image_rgba.mode
-            size_t = pil_image_rgba.size
-            data_t = pil_image_rgba.tobytes()
-            py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
             # position is set in game view when the tile is displayed
             counter += 1
-            coords = getXYCoordinatesFromBox(box, self.tile_size)
+            coords = getXYCoordinatesFromBox(box, chopsize)
+            print ("coords {}".format(str(coords)))
 
             tile_matrix[coords[0]][coords[1]] = py_image
             # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-
     return tile_matrix
 
+# from counter calculate the x y position
+#
+def get_xy_from_counter(tiles_grid,counter):
+    # divide counter by size to get the col and row
+    row = 0
+    col = 0
+    if counter == 0:
+        return row,col
+    rows = len(tiles_grid)
+    cols = len(tiles_grid[0])
+    total = rows*cols
 
+    row,col = divmod(total,counter)
+    return row,col
+
+def display_tiles(tiles_grid):
+    # check for grid tiles
+    counter = 0
+
+    counter_col = 0
+    counter_row = 0
+    # row is y col is x
+    x = 0
+    y = 0
+
+    counter = 0
+
+    for row in tiles_grid:
+        for col in row:
+            # row_index is screen spacer and tile size times row
+            #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
+            #                                                 str(col.coords[1])))
+
+            #print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+
+            x,y = get_xy_from_counter(tiles_grid,counter)
+            # # TODO set the Tile object state
+            # tile.y = y
+            # tile.state = TILE_ON_BOARD_TEST
+            #print('y {} x {}'.format(str(y), str(x)))
+            py_image = col
+            gameDisplay.blit(py_image, (0, 0))
+            # self.tiles_grid[col.y_index][col.x_index] = tile
+            counter += 1
+
+
+gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('test transparent')
 gameDisplay.fill(white)
 im_pth = "rk_background.png"
 # img = Image.open("rk_background.png")
 im = Image.open(im_pth)
 num_tiles = 24
-tile_size = fit_squares(im, num_tiles)
+im = image_resize(im)
+tile_tuple = fit_squares(im, num_tiles)
+#size,num_cols,num_rows
 # crop to tiles and show
-matrix = crop_image_to_array(im,num_tiles,tile_size)
+matrix = crop_image_to_array(im,tile_tuple)
+display_tiles(matrix)
+
 while not crashed:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
