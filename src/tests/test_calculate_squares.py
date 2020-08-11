@@ -17,8 +17,34 @@ SCREEN_SPACER_SIZE = 2
 OUTER_BORDER_SIZE = 20
 # space between grid dashboard and grid scroller
 INNER_BORDER_SIZE = 4
-
-
+levels = {
+  "beginner" : {
+    "width" : 440,
+    "height" : 660,
+    "num_tiles": 24
+  },
+  "intermid" : {
+    "width" : 450,
+    "height" : 630,
+    "num_tiles": 35
+  },
+   "inter_1": {
+     "width": 420,
+     "height": 630,
+     "num_tiles": 63
+   },
+   "inter_2": {
+      "width": 450,
+      "height": 630,
+      "num_tiles": 35
+   },
+    "master" : {
+    "width" : 450,
+    "height" : 650,
+    "num_tiles": 117
+  }
+}
+level = levels['inter_1']
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('test transparent')
 
@@ -40,8 +66,10 @@ def image_resize(im):
     original_width = SCREEN_WIDTH - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
     original_height = SCREEN_HEIGHT - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
     # make the grid 80%
-    im_width = 440 #  int(original_width * (grid_size_percent / 100))
-    im_height = 660 # int(original_height * (grid_size_percent / 100))
+
+
+    im_width = level['width'] #  int(original_width * (grid_size_percent / 100))
+    im_height = level['height'] # int(original_height * (grid_size_percent / 100))
     im = im.resize((im_width, im_height), Image.LANCZOS)
     return im
 
@@ -241,8 +269,8 @@ def draw_grid_of_rects():
             col_spacer = OUTER_BORDER_SIZE/2 + SCREEN_SPACER_SIZE * x
             # print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
 
-            x_pos = x * tile_size + col_spacer
-            y_pos = y * tile_size + row_spacer
+            x_pos = int(x * tile_size + col_spacer)
+            y_pos = int(y * tile_size + row_spacer)
             print('x_pos {} y_pos {}'.format(str(x_pos), str(y_pos)))
             locations_matrix[y][x] = (x_pos,y_pos)
             rect = pygame.Rect(x_pos, y_pos, tile_size, tile_size)
@@ -273,8 +301,8 @@ def display_tiles(tiles_grid):
 
             loc_tuple = locations_matrix[x_counter][y_counter]
 
-            y = loc_tuple[0]
-            x = loc_tuple[1]
+            y = int(loc_tuple[0])
+            x = int(loc_tuple[1])
             # # TODO set the Tile object state
             # tile.y = y
             # tile.state = TILE_ON_BOARD_TEST
@@ -299,7 +327,7 @@ pygame.display.set_caption('test transparent')
 gameDisplay.fill(white)
 
 im = getLoadedImage()
-num_tiles = 24
+num_tiles = level['num_tiles']
 im = image_resize(im)
 tile_tuple = fit_squares(im, num_tiles)
 #size,num_cols,num_rows
