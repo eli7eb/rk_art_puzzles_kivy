@@ -89,7 +89,7 @@ class LoadingView(View):
             # at this stage I need to know the final image size
             art_tiles_obj = get_art_tiles.getArtImage()
             #self.dashboard.set_title_info(art_dict)
-            art_image = GetArtImage(art_tiles_obj)
+            art_image = GetArtImage(art_tiles_obj,SCREEN_WIDTH, SCREEN_HEIGHT)
             pygame_image, pil_image = art_image.getBitmapFromTiles()
             return pygame_image, pil_image
         else:
@@ -127,19 +127,14 @@ class LoadingView(View):
         # calculate where I am on the grid by dividing the box to the grid
         # create the tile object with image and image_transparent
 
-    def fit_aquares(self):
-        print()
-        im_pth = "rk_background.png"
-        # img = Image.open("rk_background.png")
-        im = Image.open(im_pth)
-        n = 12
+    def fit_squares(self):
+        n = self.level.tiles_ver*self.level.tiles_hor
+        width = self.pil_image.width
+        height = self.pil_image.height
 
-        im = im.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
-        width = im.width
-        height = im.height
         px = math.ceil(math.sqrt(n * width / height))
         if math.floor(px * height / width) * px < n:
-            sx = height / math.ceil(px * y / x)
+            sx = height / math.ceil(px * height / width)
         else:
             sx = width / px
         py = math.ceil(math.sqrt(n * height / width))
@@ -147,20 +142,24 @@ class LoadingView(View):
             sy = width / math.ceil((width * py / height))
         else:
             sy = height / py
-        return math.max(sx, sy)
+        # TODO get the number of cols and rows by deviding the width/size and height/size
+        # return all as tuple
+        size = int(max(sx, sy))
+        num_cols = int(width / size)
+        num_rows = int(height / size)
+        return size, num_cols, num_rows
 
-    def crop_image_to_array(self, image, tiles_hor, tiles_ver):
+    def crop_image_to_array(self, image, tile_tuple):
         self.image = image
-
         # TODO 4 tiles across depends on level
-        w = tiles_hor
+        w = tile_tuple[1]
         # floor division
-        h = tiles_ver
-        int(SCREEN_HEIGHT // self.tile_size)
+        h = tile_tuple[2]
+
         # build matrix for tiles
         width = int(self.image.width)
         height = int(self.image.height)
-        chopsize = int(self.tile_size)
+        chopsize = tile_tuple[0]
 
         w_index = int(math.ceil(width / chopsize))
         h_index = int(math.ceil(height / chopsize))
@@ -168,7 +167,7 @@ class LoadingView(View):
         w_counter = 0
         h_counter = 0
         counter = 0
-        infile = 'in.jpg'
+
         for x0 in range(0, width, chopsize):
             for y0 in range(0, height, chopsize):
                 box = (x0, y0,
@@ -203,9 +202,9 @@ class LoadingView(View):
                 py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
                 # position is set in game view when the tile is displayed
                 counter += 1
-                coords = getXYCoordinatesFromBox(box, self.tile_size)
+                coords = getXYCoordinatesFromBox(box, chopsize)
 
-                py_tile = Tile(py_image, py_image_t, self.tile_size, x0, y0, coords, TILE_INVISIBLE)
+                py_tile = Tile(py_image, py_image_t, chopsize, x0, y0, coords, TILE_INVISIBLE)
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
@@ -217,6 +216,7 @@ class LoadingView(View):
 
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
+
 
         # get image and tiles grid
     def prepare(self, mood_str, level):
@@ -233,12 +233,11 @@ class LoadingView(View):
         # self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
 
         self.puzzle_image, self.pil_image = self.getLoadedImage()
-        tile_tuple = self.fit_squares(self.pil_image, level.tiles_hor*level.tiles_ver)
+        tile_tuple = self.fit_squares()
         # size,num_cols,num_rows
         # crop to tiles and show
 
-        self.tiles_grid = self.crop_image_to_array(self.pil_image, self.level.tiles_hor,
-                                                              self.level.tiles_ver)
+        self.tiles_grid = self.crop_image_to_array(self.pil_image, tile_tuple)
         # self.tiles_drag_grid = self.init_drag_tiles()
         # total_size = len(self.tiles_grid) * len(self.tiles_grid[0])
         # # number oh shown tiles is floor fifth og the whole
