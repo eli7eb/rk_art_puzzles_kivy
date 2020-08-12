@@ -24,8 +24,34 @@ from src.game_consts.game_constants import SCREEN_SPACER_SIZE
 # the returned data is the list of squares (tiles)
 # name and link of the art
 
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 800
+levels = {
+  "beginner" : {
+    "width" : 440,
+    "height" : 660,
+    "num_tiles": 24
+  },
+  "intermid" : {
+    "width" : 450,
+    "height" : 630,
+    "num_tiles": 35
+  },
+   "inter_1": {
+     "width": 420,
+     "height": 630,
+     "num_tiles": 63
+   },
+   "inter_2": {
+      "width": 450,
+      "height": 630,
+      "num_tiles": 35
+   },
+    "master" : {
+    "width" : 450,
+    "height" : 650,
+    "num_tiles": 117
+  }
+}
+LOADING_ART_TEXT_COLOR = pygame.Color(242, 214, 179, 95)
 
 # count number of spaces in grid is calculated as number of tiles horizontally -1
 # count number of spaces in grid is calculated as number of tiles vertically -1
@@ -33,26 +59,12 @@ SCREEN_HEIGHT = 800
 # values are first 2 are row,col on the left side
 # last 2 are bottom right on the right side
 # TODO if error exit game ? or find new image ?
-def validate_crop_size(width, height, tile_size, *values):
-    x = 0
-    y = 0
-    left = values[0]
-    upper = values[1]
-    right = values[2]
-    lower = values[3]
-
-    if right < left:
-        left, right = right, left
-
-    if lower < upper:
-        lower, upper = upper, lower
-    if width < 0:
-        x += width
-        width = abs(width)
-    if height < 0:
-        y += height
-        height = abs(height)
-    # assert ((row_index * self.tile_size) in range(0, w), "Top outside range")
+def validate_crop_size(image,tile_size):
+    w = abs(image.width - tile_size)
+    h = abs(image.height - tile_size)
+    if w > 5 or h > 5:
+        return False
+    return True
 
 
 # from box and image size get the x y coodinates in the grid
@@ -70,14 +82,18 @@ def getXYCoordinatesFromBox(box, tile_size):
 # TODO add are you sure
 class LoadingView(View):
     # Dummy screen that just quits the game (after quitting screen has been shown)
-    def __init__(self, screen,bg_color,level):
+    def __init__(self, screen,bg_color,level_name):
         View.__init__(self, screen,bg_color)
-        self.level = level
+        self.level_name = level_name
+        self.level = levels[self.level_name]
+        self.title = None
+        self.long_title = None
 
-        # call the game utils to load the image from list of images returned
-        # resize image
-        # crop to tiles and resize them
-        # 2 modes remote and locally when I need to test
+    # call the game utils to load the image from list of images returned
+    # resize image
+    # crop to tiles and resize them
+    # 2 modes remote and locally when I need to test
+    # TODO when local make sure there is a title
     def getLoadedImage(self):
         remote = True
         if remote:
@@ -86,6 +102,8 @@ class LoadingView(View):
             art_dict = search_art_obj.getImageList()
             # get one art piece
             get_art_tiles = GetArtTiles(art_dict)
+            self.title = art_dict['title']
+            self.long_title = art_dict['longTitle']
             # at this stage I need to know the final image size
             art_tiles_obj = get_art_tiles.getArtImage()
             #self.dashboard.set_title_info(art_dict)
@@ -112,33 +130,49 @@ class LoadingView(View):
             local_pygame_image = pygame.image.fromstring(data, size, mode)
             return local_pygame_image, local_pil_image
 
-        # crop function
-        # Set the cropping area with box=(left, upper, right, lower).
-        # an_array = [[1, 2], [3, 4]]
-        # rows = len(an_array) Find row and column length.
-        # columns = len(an_array[0])
-        # total_length = rows * columns. Compute total length.
-        # print(total_length)
-        # cut the image to tiles and return them as two dimentianal array
-        # im_crop = im.crop((100, 75, 300, 150))
-        # calculate # tiles : regular and level specific
-        # calculate per col and per line
-        # validate that I am not out side the image size
-        # calculate where I am on the grid by dividing the box to the grid
-        # create the tile object with image and image_transparent
+    def get_tile_blurred(self, py_image):
+        pil_image_rgba = py_image.copy()
+        # test to save tiles
+        # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
 
+        pil_image_rgba = pil_image_rgba.convert('RGBA')
+        # pil_image_rgba = pil_image_rgba.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+        data = pil_image_rgba.getdata()  # you'll get a list of tuples
+        newData = []
+        for a in data:
+            a = a[:3]  # you'll get your tuple shorten to RGB
+            a = a + (128,)  # change the 100 to any transparency number you like between (0,255)
+            newData.append(a)
+        pil_image_rgba.putdata(newData)  # you'll get your new img ready
+        mode_t = pil_image_rgba.mode
+        size_t = pil_image_rgba.size
+        data_t = pil_image_rgba.tobytes()
+        py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
+        return py_image_t
+
+
+
+
+    # the squares need to be exactly the size to fit in the array
+    # we need to decide which comes first the image size or the tiles size
+    # on a beginner level I have 4 - 6
+    # then 5 - 7
+    # then 7 - 9
     def fit_squares(self):
-        n = self.level.tiles_ver*self.level.tiles_hor
-        width = self.pil_image.width
-        height = self.pil_image.height
+        logger = RkLogger.__call__().get_logger()
+        logger.info("fit_squares")
+        im = self.pil_image
+        num_tiles = self.level['num_tiles']
+        width = im.width
+        height = im.height
 
-        px = math.ceil(math.sqrt(n * width / height))
-        if math.floor(px * height / width) * px < n:
+        px = math.ceil(math.sqrt(num_tiles * width / height))
+        if math.floor(px * height / width) * px < num_tiles:
             sx = height / math.ceil(px * height / width)
         else:
             sx = width / px
-        py = math.ceil(math.sqrt(n * height / width))
-        if math.floor(py * width / height) * py < n:
+        py = math.ceil(math.sqrt(num_tiles * height / width))
+        if math.floor(py * width / height) * py < num_tiles:
             sy = width / math.ceil((width * py / height))
         else:
             sy = height / py
@@ -149,23 +183,31 @@ class LoadingView(View):
         num_rows = int(height / size)
         return size, num_cols, num_rows
 
-    def crop_image_to_array(self, image, tile_tuple):
-        self.image = image
+    # crop function
+    # Set the cropping area with box=(left, upper, right, lower).
+    # an_array = [[1, 2], [3, 4]]
+    # rows = len(an_array) Find row and column length.
+    # columns = len(an_array[0])
+    # total_length = rows * columns. Compute total length.
+    # print(total_length)
+    # cut the image to tiles and return them as two dimentianal array
+    # im_crop = im.crop((100, 75, 300, 150))
+    # calculate # tiles : regular and level specific
+    # calculate per col and per line
+    # validate that I am not out side the image size
+    # calculate where I am on the grid by dividing the box to the grid
+    # create the tile object with image and image_transparent
+    def crop_image_to_array(self, tile_tuple):
+        im = self.pil_image
         # TODO 4 tiles across depends on level
-        w = tile_tuple[1]
-        # floor division
-        h = tile_tuple[2]
-
-        # build matrix for tiles
-        width = int(self.image.width)
-        height = int(self.image.height)
+        width = int(im.width)
+        height = int(im.height)
         chopsize = tile_tuple[0]
 
-        w_index = int(math.ceil(width / chopsize))
-        h_index = int(math.ceil(height / chopsize))
-        tile_matrix = [[1] * w_index for n in range(h_index)]
-        w_counter = 0
-        h_counter = 0
+        num_cols = tile_tuple[1]
+        num_rows = tile_tuple[2]
+
+        tile_matrix = [[1] * num_cols for n in range(num_rows)]
         counter = 0
 
         for x0 in range(0, width, chopsize):
@@ -173,33 +215,31 @@ class LoadingView(View):
                 box = (x0, y0,
                        x0 + chopsize if x0 + chopsize < width else width - 1,
                        y0 + chopsize if y0 + chopsize < height else height - 1)
-                logger = RkLogger.__call__().get_logger()
-                logger.info('box {}'.format(box))
+                print('box {}'.format(box))
 
-                cropped = image.crop(box)
-                mode = cropped.mode
-                size = cropped.size
-                data = cropped.tobytes()
-                py_image = pygame.image.fromstring(data, size, mode)
+                cropped = im.crop(box)
+                if validate_crop_size(cropped, chopsize):
+                    mode = cropped.mode
+                    size = cropped.size
+                    data = cropped.tobytes()
+                    py_image = pygame.image.fromstring(data, size, mode)
+
+                    # position is set in game view when the tile is displayed
+                    counter += 1
+                    coords = getXYCoordinatesFromBox(box, chopsize)
+                    print("coords {}".format(str(coords)))
+                    # TODO fix this
+                    py_image_t = py_image.copy() # self.get_tile_blurred(py_image)
+                    py_tile = Tile(py_image, py_image_t, chopsize, x0, y0, coords, TILE_INVISIBLE)
+
+                    tile_matrix[coords[0]][coords[1]] = py_tile
+                    # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
+                else:
+                    print('error on crop')
+
 
                 # PIL for transparant copy
-                pil_image_rgba = cropped.copy()
-                # test to save tiles
-                # cropped.save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
 
-                pil_image_rgba = pil_image_rgba.convert('RGBA')
-                # pil_image_rgba = pil_image_rgba.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
-                data = pil_image_rgba.getdata()  # you'll get a list of tuples
-                newData = []
-                for a in data:
-                    a = a[:3]  # you'll get your tuple shorten to RGB
-                    a = a + (128,)  # change the 100 to any transparency number you like between (0,255)
-                    newData.append(a)
-                pil_image_rgba.putdata(newData)  # you'll get your new img ready
-                mode_t = pil_image_rgba.mode
-                size_t = pil_image_rgba.size
-                data_t = pil_image_rgba.tobytes()
-                py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
                 # position is set in game view when the tile is displayed
                 counter += 1
                 coords = getXYCoordinatesFromBox(box, chopsize)
@@ -209,14 +249,35 @@ class LoadingView(View):
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
 
+
         return tile_matrix
 
     def get_image_data(self):
         return self.tiles_grid
 
+    def get_image(self):
+        return self.pil_image
+
+    def get_image_info(self):
+        return self.title, self.long_title
+
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
 
+        # resize based on level
+        # width needs to accomodate the scroller
+        # height needs to accomodate the dashboard
+        # validate that the size is divided by tile_size
+    def image_resize(self, im):
+        grid_size_percent = 85
+        original_width = SCREEN_WIDTH - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
+        original_height = SCREEN_HEIGHT - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
+        # make the grid 80%
+
+        im_width = self.level['width']  # int(original_width * (grid_size_percent / 100))
+        im_height = self.level['height']  # int(original_height * (grid_size_percent / 100))
+        im = im.resize((im_width, im_height), Image.LANCZOS)
+        return im
 
         # get image and tiles grid
     def prepare(self, mood_str, level):
@@ -224,6 +285,7 @@ class LoadingView(View):
             self.mood_str = self.getRandomSearchValue()
         else:
             self.mood_str = mood_str
+        self.transitionToState = None
 
         # self.top_drag_grid_x = SCREEN_SPACER_SIZE
         # self.top_drag_grid_y = SCREEN_SPACER_SIZE
@@ -232,12 +294,20 @@ class LoadingView(View):
         #
         # self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
 
-        self.puzzle_image, self.pil_image = self.getLoadedImage()
+        self.puzzle_image, im = self.getLoadedImage()
+        self.pil_image = self.image_resize(im)
         tile_tuple = self.fit_squares()
-        # size,num_cols,num_rows
-        # crop to tiles and show
 
-        self.tiles_grid = self.crop_image_to_array(self.pil_image, tile_tuple)
+        tile_size = tile_tuple[0]
+        num_cols = tile_tuple[1]
+        num_rows = tile_tuple[2]
+        locations_matrix = [[1] * num_cols for n in range(num_rows)]
+        #draw_border()
+        #draw_grid_of_rects()
+
+
+
+        self.tiles_grid = self.crop_image_to_array(tile_tuple)
         # self.tiles_drag_grid = self.init_drag_tiles()
         # total_size = len(self.tiles_grid) * len(self.tiles_grid[0])
         # # number oh shown tiles is floor fifth og the whole
@@ -245,6 +315,18 @@ class LoadingView(View):
         # list_to_random = list(range(0, total_size))
         # self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
         # self.draw_grid()
+        self.transitionToState = VIEW_STATE_GAME_A
+
+    def render(self):
+        self.loading_msg = 'LOADING ART'
+        titleFont = pygame.font.SysFont("comicsansmsttf", 60)
+        loading_str = titleFont.render(self.loading_msg, True, LOADING_ART_TEXT_COLOR)
+        self.screen.fill(self.bg_color)
+        self.screen.blit(loading_str, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
 
     def transition(self):
         return self.transitionToState
+
+    def clean(self):
+        transparent = (127, 127, 127)
+        self.screen.fill(transparent)

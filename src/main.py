@@ -16,6 +16,7 @@ from src.game_views.quit_view import QuitView
 from src.game_views.game_view import GameView
 from src.game_consts.game_constants import *
 from src.game_utils.game_logger import RkLogger
+from src.game_consts.game_constants import *
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -33,21 +34,13 @@ titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
 menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
 
-BACKGROUND_COLOR = pygame.Color(0, 0, 100)
+BACKGROUND_COLOR = pygame.Color(121,136,145,57)
+BACKGROUND_COLOR_LOADING = pygame.Color(40,67,90,35)
+
 TEXT_COLOR = pygame.Color(255, 255, 255)
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 800
 HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 
-VIEW_STATE_SPLASH = 0
-VIEW_STATE_MENU = 1
-VIEW_STATE_LOADING = 2
-VIEW_STATE_GAME_A = 3
-VIEW_STATE_GAME_B = 4
-VIEW_STATE_OPTIONS = 5
-VIEW_STATE_QUITTING = 6
-VIEW_STATE_QUIT = 7
 
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 mood_str = ""
@@ -55,7 +48,7 @@ mood_str = ""
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "RK games presents", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
-    VIEW_STATE_LOADING: LoadingView(screen, BACKGROUND_COLOR, level),
+    VIEW_STATE_LOADING: LoadingView(screen, BACKGROUND_COLOR_LOADING, "intermid"),
     VIEW_STATE_GAME_A: GameView(screen, level),
     VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
@@ -86,19 +79,23 @@ while True:
     nextViewId = currentViewState.transition()
     if nextViewId:
         logger.info("Transition from %s -> %s" % (currentViewState, views[nextViewId]))
-        if currentViewId == VIEW_STATE_MENU:
+        if currentViewId == VIEW_STATE_SPLASH:
+            currentViewState.clean()
+        elif currentViewId == VIEW_STATE_MENU:
             mood_str = currentViewState.textinput.get_text()
             currentViewState.clean()
         elif currentViewId == VIEW_STATE_LOADING:
-            image_data = currentViewState.get_image_data()
-
+            image_grid_data = currentViewState.get_image_data()
+            image_data = currentViewState.get_image()
+            title,long_title = currentViewState.get_image_info()
+            currentViewState.clean()
 
         currentViewId = nextViewId
         currentViewState = views[currentViewId]
         if currentViewId == VIEW_STATE_LOADING:
             currentViewState.prepare(mood_str,level)
         elif currentViewId == VIEW_STATE_GAME_A:
-            currentViewState.prepare(image_data)
+            currentViewState.prepare(image_grid_data, image_data, title, long_title)
         else:
             currentViewState.prepare()
 

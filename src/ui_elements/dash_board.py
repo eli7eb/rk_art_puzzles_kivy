@@ -24,11 +24,11 @@ class DashBoard:
 
     # art_dict.title and art_dict.longTitle
     # TODO set the title to fit in the correct space with new line - break the line
-    def set_title_info(self, art_dict):
+    def set_title_info(self, title, long_title):
         self.font = pygame.font.SysFont("comicsansmsttf", 20)
-        self.textSurfaceTitle = self.font.render(art_dict['title'], True, TEXT_COLOR)
+        self.textSurfaceTitle = self.font.render(title, True, TEXT_COLOR)
         self.screen.blit(self.textSurfaceTitle, [self.spacer_size, self.text_pos_y+30])
-        self.textSurfaceLongTitle = self.font.render(art_dict['longTitle'], True, TEXT_COLOR)
+        self.textSurfaceLongTitle = self.font.render(long_title, True, TEXT_COLOR)
         self.screen.blit(self.textSurfaceLongTitle, [self.spacer_size, self.text_pos_y + 50])
 
     # play time tiles left to go

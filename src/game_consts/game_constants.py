@@ -1,6 +1,25 @@
 from src.game_levels.game_level import Level
 
 
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 800
+# frame around the display edges
+OUTER_BORDER_SIZE = 20
+# space between grid dashboard and grid scroller
+INNER_BORDER_SIZE = 4
+
+VIEW_STATE_SPLASH = 0
+VIEW_STATE_MENU = 1
+VIEW_STATE_LOADING = 2
+VIEW_STATE_GAME_A = 3
+VIEW_STATE_GAME_B = 4
+VIEW_STATE_OPTIONS = 5
+VIEW_STATE_QUITTING = 6
+VIEW_STATE_QUIT = 7
+
+HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
+HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
+
 # all level parameters are a calculation of LEVEL
 # log levels to write into the log file:
 # all print statement will go there

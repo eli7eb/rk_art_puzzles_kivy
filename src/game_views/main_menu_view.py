@@ -7,17 +7,8 @@ import pygame
 from pygame.locals import *
 from src.game_views.views import View
 from src.game_utils.game_logger import RkLogger
-VIEW_STATE_SPLASH = 0
-VIEW_STATE_MENU = 1
-VIEW_STATE_GAME_A = 2
-VIEW_STATE_GAME_B = 3
-VIEW_STATE_OPTIONS = 4
-VIEW_STATE_QUITTING = 5
-VIEW_STATE_QUIT = 6
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 800
-HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
-HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
+from src.game_consts.game_constants import *
+
 TEXT_COLOR = pygame.Color(255, 255, 255)
 # display main menu and background
 # let the user enter the mood or hit enter for random
@@ -26,13 +17,15 @@ TEXT_COLOR = pygame.Color(255, 255, 255)
 # TODO about menu with links
 
 # Background
-BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (SCREEN_WIDTH, SCREEN_HEIGHT))
-
+bg_old_logo = pygame.image.load(os.path.join("assets", "Rijk_old_logo.png"))
+#bg_logo = pygame.image.load(os.path.join("assets", "Rijk_logo.png"))
+bg_logo = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Rijk_logo.png")), (int((SCREEN_WIDTH*80)/100), int(SCREEN_HEIGHT/6)))
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 menuFont = pygame.font.SysFont("comicsansmsttf", 30)
 menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
 COLOR_INACTIVE = pygame.Color('azure2')
 COLOR_ACTIVE = pygame.Color('azure1')
+
 FONT = pygame.font.Font(None, 32)
 
 
@@ -87,20 +80,20 @@ class MenuView(View):
     # Displays the main menu
 
     titleText = "RK_PUZZLES"
+    # TODO add the about menu when done
+    # menuItems = ['Play', 'Options', 'About', 'Quit']
 
-    menuItems = ['Play', 'Options', 'About', 'Quit']
+    menuItems = ['Play', 'Options', 'Quit']
     selectedItem = 0
     centerX = HALF_SCREEN_WIDTH
     centerY = HALF_SCREEN_HEIGHT
 
-    MENU_ITEM_GAME_A = 0
-    MENU_ITEM_GAME_B = 1
-    MENU_ITEM_OPTIONS = 2
-    MENU_ITEM_QUIT = 3
+    MENU_LOADING = 0
+    MENU_ITEM_OPTIONS = 1
+    MENU_ITEM_QUIT = 2
 
     MENU_ITEM_TO_VIEW_STATE = {
-        MENU_ITEM_GAME_A: VIEW_STATE_GAME_A,
-        MENU_ITEM_GAME_B: VIEW_STATE_GAME_B,
+        MENU_LOADING: VIEW_STATE_LOADING,
         MENU_ITEM_OPTIONS: VIEW_STATE_OPTIONS,
         MENU_ITEM_QUIT: VIEW_STATE_QUITTING,
     }
@@ -145,8 +138,10 @@ class MenuView(View):
                     logger.info("K_RETURN mood_str "+self.textinput.text)
                     logger.info("K_RETURN clicked menu item "+self.menuItems[self.selectedItem])
                     # set loading message
-                    self.loading_msg = 'LOADING ART'
-                    self.transitionToState = self.MENU_ITEM_TO_VIEW_STATE[self.selectedItem]
+                    if self.menuItems[self.selectedItem] == 'Play':
+                        self.transitionToState = VIEW_STATE_LOADING
+                    else:
+                        self.transitionToState = self.MENU_ITEM_TO_VIEW_STATE[self.selectedItem]
 
     def renderMenuItems(self, screen, selectedItem):
         index = 0
@@ -170,7 +165,7 @@ class MenuView(View):
     def generate_random_color(self):
         start = 0
         stop = 255
-
+        # 798891
         red = random.randint(start, stop)
         green = random.randint(start, stop)
         blue = random.randint(start, stop)
@@ -178,17 +173,13 @@ class MenuView(View):
 
     def render(self):
         textSurface = titleFont.render(self.titleText, True, TEXT_COLOR)
-
-        self.screen.blit(BG, (0, 0))
+        x = int(SCREEN_WIDTH/2 - ((SCREEN_WIDTH*80)/100)/2)
+        self.screen.blit(bg_logo, ( x, 10))
         # when mood is entered change the display
-        if self.loading_msg:
-            loading_str = titleFont.render(self.loading_msg, True, self.generate_random_color())
-            self.screen.blit(loading_str, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-        else:
-            self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-            self.renderMenuItems(self.screen, self.selectedItem)
-            self.textinput.update()
-            self.textinput.draw(self.screen)
+        self.screen.blit(textSurface, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
+        self.renderMenuItems(self.screen, self.selectedItem)
+        self.textinput.update()
+        self.textinput.draw(self.screen)
         pygame.display.flip()
 
     def clean(self):

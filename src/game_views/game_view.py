@@ -28,7 +28,7 @@ SCREEN_SPACER_NUMBER_HOR = 2
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
 FONT = pygame.font.Font(None, 32)
 
-def generate_random_color(self):
+def generate_random_color():
     start = 0
     stop = 255
 
@@ -67,6 +67,7 @@ class GameView(View):
         self.screen = screen
         self.game_utils = GameUtils(level)
         self.level = level
+
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.dash_board_position = [0, 0]
@@ -97,51 +98,56 @@ class GameView(View):
 
 
     # get image and tiles grid
-    def prepare(self, mood_str):
-        if mood_str == '':
-            self.mood_str = self.game_utils.getRandomSearchValue()
-        else:
-            self.mood_str = mood_str
+    def prepare(self, tile_grid, image,title, long_title):
 
         self.top_drag_grid_x = SCREEN_SPACER_SIZE
         self.top_drag_grid_y = SCREEN_SPACER_SIZE
         self.dash_board_position = [4, 3]
         self.drag_tiles_position = [4, 3]
-
+        self.title = title
+        self.long_title = long_title
         self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
-
-        self.puzzle_image, self.pil_image = self.getLoadedImage()
-
-        self.tiles_grid = self.game_utils.crop_image_to_array(self.pil_image,self.level.tiles_hor,self.level.tiles_ver)
+        self.pil_image = image
+        self.tiles_grid = tile_grid
         # self.tiles_drag_grid = self.init_drag_tiles()
         total_size = len(self.tiles_grid) * len(self.tiles_grid[0])
+        self.num_rows = len(self.tiles_grid)
+        self.num_cols = len(self.tiles_grid[0])
+        self.locations_matrix = [[1] * self.num_cols for n in range(self.num_rows)]
+        tile = tile_grid[0][0]
+        self.tile_size = tile.size
         # number oh shown tiles is floor fifth og the whole
         number_tiles_displayed = int(total_size / 5)
         list_to_random = list(range(0, total_size))
         self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
-        self.draw_grid()
+        self.draw_grid_of_rects()
+        self.display_tiles()
+        self.display_dash_board()
 
     # draw grid of rects around the tiles
     # last row is not the same size as the previous TODO fix it
-    def draw_grid(self):
-        width = len(self.tiles_grid[0])
-        height = len(self.tiles_grid)
-        block_size = self.game_utils.tile_size
-        grid_color = generate_random_color(self)
-        #self.logger.info("draw_grid width {} height {}".format(str(width),str(height)))
+    def draw_grid_of_rects(self):
+        print('draw_grid_of_rects')
+        width = self.pil_image.width
+        height = self.pil_image.height
 
-        for y in range(height):
-            for x in range(width):
-                row_spacer = SCREEN_SPACER_SIZE * y + SCREEN_SPACER_SIZE
-                col_spacer = SCREEN_SPACER_SIZE * x + SCREEN_SPACER_SIZE
+        grid_color = generate_random_color()
+        # self.logger.info("draw_grid width {} height {}".format(str(width),str(height)))
+
+        for y in range(self.num_rows):
+            for x in range(self.num_cols):
+                row_spacer = OUTER_BORDER_SIZE / 2 + SCREEN_SPACER_SIZE * y
+                col_spacer = OUTER_BORDER_SIZE / 2 + SCREEN_SPACER_SIZE * x
                 # print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
 
-                x_pos = x * block_size + col_spacer
-                y_pos = y * block_size + row_spacer
+                x_pos = int(x * self.tile_size + col_spacer)
+                y_pos = int(y * self.tile_size + row_spacer)
+                print('x_pos {} y_pos {}'.format(str(x_pos), str(y_pos)))
+                self.locations_matrix[y][x] = (x_pos, y_pos)
+                rect = pygame.Rect(x_pos, y_pos, self.tile_size, self.tile_size)
+                # self.logger.info("y {} x {} ".format(str(y_pos),str(x_pos)))
+                pygame.draw.rect(self.screen, grid_color, rect, SCREEN_SPACER_SIZE)
 
-                rect = pygame.Rect(x_pos, y_pos, block_size, block_size)
-                #self.logger.info("y {} x {} ".format(str(y_pos),str(x_pos)))
-                pygame.draw.rect(self.screen, grid_color, rect,SCREEN_SPACER_SIZE)
 
 
     def handleEvents(self):
@@ -166,14 +172,11 @@ class GameView(View):
     # the second is spacer * row or col + 1
     def display_tiles(self):
         # check for grid tiles
-        counter = 0
-
-        self.logger.info('rows {} cols  {}'.format(str(len(self.tiles_grid)), str(len(self.tiles_grid[0]))))
-        counter_col = 0
-        # row is y col is x
         x = 0
         y = 0
-        counter = 0
+
+        x_counter = 0
+        y_counter = 0
 
         for row in self.tiles_grid:
             for col in row:
@@ -181,25 +184,21 @@ class GameView(View):
                 #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
                 #                                                 str(col.coords[1])))
 
-                row_spacer = SCREEN_SPACER_SIZE * col.coords[0] + SCREEN_SPACER_SIZE
-                col_spacer = SCREEN_SPACER_SIZE * col.coords[1] + SCREEN_SPACER_SIZE
-                #print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+                loc_tuple = self.locations_matrix[x_counter][y_counter]
 
-                x = col.x_pos + row_spacer
-                y = col.y_pos + col_spacer
+                y = int(loc_tuple[0])
+                x = int(loc_tuple[1])
                 self.logger.info('y {} x {}'.format(str(y), str(x)))
-
-                if (y % 2 == 0):
-                     display_tile = col.transparant_image
-                else:
-                     display_tile = col.transparant_image
                 # # TODO set the Tile object state
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
-                #print('y {} x {}'.format(str(y), str(x)))
+                display_tile = col.image
                 self.screen.blit(display_tile, (y, x))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
-                counter += 1
+                y_counter += 1
+                if y_counter > self.num_cols - 1:
+                    y_counter = 0
+            x_counter += 1
 
     # display only number of tiles as hints
     # get the number then get a set of random locations on grid to display
@@ -265,7 +264,7 @@ class GameView(View):
     # tiles x of y
     # name of art and painter are shown as the player progresses
     def display_dash_board(self):
-        print()
+        self.dashboard.set_title_info(self.title,self.long_title)
 
     # start from random number of vertical tiles
     # get random

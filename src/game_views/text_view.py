@@ -39,6 +39,10 @@ class TextView(View):
             nextView = self.nextView
         return nextView
 
+    def clean(self):
+        transparent = (127, 127, 127)
+        self.screen.fill(transparent)
+
     def __str__(self):
         return "%s(\"%s\")" % (type(self).__name__, self.text)
 

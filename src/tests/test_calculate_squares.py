@@ -44,7 +44,7 @@ levels = {
     "num_tiles": 117
   }
 }
-level = levels['inter_1']
+level = levels['intermid']
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('test transparent')
 
