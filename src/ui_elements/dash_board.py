@@ -5,6 +5,12 @@
 # time passed
 # round number
 # player and leader board info
+# TODO add timer for game time and step time
+# TODO leader boards and player name score
+# TODO add timer for levels with time
+# TODO add counter for tiles remain / total
+# TODO add link to title line
+# TODO if local and not remote add info about the piece
 
 import pygame
 from pygame.locals import *

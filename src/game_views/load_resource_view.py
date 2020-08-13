@@ -79,6 +79,7 @@ def getXYCoordinatesFromBox(box, tile_size):
     y_index = int(y/tile_size)
     return y_index, x_index
 
+
 # TODO add are you sure
 class LoadingView(View):
     # Dummy screen that just quits the game (after quitting screen has been shown)
@@ -95,7 +96,7 @@ class LoadingView(View):
     # 2 modes remote and locally when I need to test
     # TODO when local make sure there is a title
     def getLoadedImage(self):
-        remote = True
+        remote = False
         if remote:
             search_art_obj = SearchArt(self.mood_str)
             # get a list of art works for this mood
@@ -114,6 +115,8 @@ class LoadingView(View):
             base_path = Path(__file__).parent.resolve()
             file_path = (base_path / "../assets/rk_background.png").resolve()
             local_pil_image = Image.open(file_path)
+            self.title = 'girl at kitchen'
+            self.long_title = 'vermeer girl at kitchen'
 
             local_pil_image = local_pil_image.convert('RGBA')
             local_pil_image = local_pil_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)

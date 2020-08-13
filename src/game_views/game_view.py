@@ -5,6 +5,9 @@
 # main menu
 # get user mood or not
 # return will lead to load image interstate menu
+# TODO add class for the scroller grid
+# TODO decide if to allow drag in the grid or just from the scroller to the grid
+# TODO allow shuffle of scroller
 
 import os, os.path
 import pygame
