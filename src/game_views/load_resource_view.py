@@ -1,7 +1,4 @@
 import random
-import sys
-import pygame
-import os, os.path
 import math
 
 from pathlib import Path
@@ -9,10 +6,9 @@ from pathlib import Path
 from src.game_consts.game_constants import *
 from src.game_views.views import View
 from src.rk_communication.rk_http_requests import *
-from src.ui_elements.grid_tile import Tile
+from src.game_data_elements.grid_tile import Tile
 from src.game_utils.game_logger import RkLogger
 
-from src.game_consts.game_constants import SCREEN_SPACER_SIZE
 # habdle all data load - remote and local
 # data load is as follows:
 # if remote is possible
@@ -95,7 +91,7 @@ class LoadingView(View):
     # 2 modes remote and locally when I need to test
     # TODO when local make sure there is a title
     def getLoadedImage(self):
-        remote = True
+        remote = False
         if remote:
             search_art_obj = SearchArt(self.mood_str)
             # get a list of art works for this mood
@@ -111,10 +107,17 @@ class LoadingView(View):
             pygame_image, pil_image = art_image.getBitmapFromTiles()
             return pygame_image, pil_image
         else:
+            # for local I pick one of three options
+
+            local_art_key = random.choice(list(local_art.keys()))
+            local_art_object = local_art[local_art_key]
+            
             base_path = Path(__file__).parent.resolve()
-            file_path = (base_path / "../assets/rk_background.png").resolve()
+            file_path = (base_path / local_art_object['file']).resolve()
             local_pil_image = Image.open(file_path)
 
+            self.title = local_art_object['title']
+            self.long_title = local_art_object['long_title']
             local_pil_image = local_pil_image.convert('RGBA')
             local_pil_image = local_pil_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
             data = local_pil_image.getdata()  # you'll get a list of tuples

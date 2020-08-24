@@ -90,7 +90,6 @@ class GameView(View):
         index = 0
         list_index = random.sample(range(0, total_grid_size), int(self.level['tiles_ver']))
         while index < list_len:
-
             if len(self.drag_tiles_grid) == 0:
                 self.level['tiles_ver']
         print()

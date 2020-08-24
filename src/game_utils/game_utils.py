@@ -5,8 +5,6 @@ import math
 from PIL import Image
 
 from src.game_consts.game_constants import *
-from src.ui_elements.grid_tile import Tile
-from src.game_utils.game_logger import RkLogger
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
