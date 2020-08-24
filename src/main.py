@@ -18,6 +18,12 @@ from src.game_consts.game_constants import *
 from src.game_utils.game_logger import RkLogger
 from src.game_consts.game_constants import *
 
+# TODO make the players think before trying so reward on success at first attempt
+# TODO and minus score on successive same tries
+# TODO non equal tiles for next version
+
+
+
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 20)

@@ -75,6 +75,7 @@ def getXYCoordinatesFromBox(box, tile_size):
     y_index = int(y/tile_size)
     return y_index, x_index
 
+
 # TODO add are you sure
 class LoadingView(View):
     # Dummy screen that just quits the game (after quitting screen has been shown)
@@ -115,6 +116,8 @@ class LoadingView(View):
             base_path = Path(__file__).parent.resolve()
             file_path = (base_path / local_art_object['file']).resolve()
             local_pil_image = Image.open(file_path)
+            self.title = 'girl at kitchen'
+            self.long_title = 'vermeer girl at kitchen'
 
             self.title = local_art_object['title']
             self.long_title = local_art_object['long_title']
