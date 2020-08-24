@@ -45,10 +45,10 @@ class GameUtils:
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
 
-    def fit_aquares(self):
+    def fit_squares(self):
         print()
-        im_pth = "rk_background.png"
-        # img = Image.open("rk_background.png")
+        im_pth = "mailkmaid.png"
+        # img = Image.open("milkmaid.png")
         im = Image.open(im_pth)
         n = 12
 

@@ -19,6 +19,7 @@ from src.game_consts.game_constants import *
 from src.game_utils.game_utils import *
 from src.ui_elements.dash_board import DashBoard
 from src.game_utils.game_logger import RkLogger
+from src.game_data_elements.tiles_2_drag_container import DragContainer
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -76,12 +77,12 @@ class GameView(View):
         self.dash_board_position = [0, 0]
         self.drag_tiles_position = [0, 0]
         self.dashboard = DashBoard(self.screen, self.game_utils.grid_width, self.game_utils.grid_height, SCREEN_SPACER_SIZE)
+        self.drag_tiles_container = DragContainer(self.screen, self.game_utils.grid_width, SCREEN_SPACER_SIZE)
         self.grid_size = None
         self.puzzle_image = None
         self.pil_image = None
         self.logger = RkLogger.__call__().get_logger()
         self.tiles_grid = None
-        self.drag_tiles_grid = None
         self.tiles_to_show = None
 
 
@@ -125,6 +126,7 @@ class GameView(View):
         self.draw_grid_of_rects()
         self.display_tiles()
         self.display_dash_board()
+        self.display_drag_tiles_container(4)
 
     # draw grid of rects around the tiles
     # last row is not the same size as the previous TODO fix it
@@ -261,6 +263,28 @@ class GameView(View):
             y = y + w
             x = 0
 
+    # loop through the tiles find by status which is not yet found
+    # get 5 random and display them vertically
+    # this is done once the next ones need to generate only one to replace the one we put in the main grid
+    # could be done streight from the grid but TODO
+    def generate_tiles_in_container(self,how_many):
+        print('generate_tiles_in_container')
+        list_of_new_tiles = []
+        for row in self.tiles_grid:
+            for col in row:
+                # TILE_IN_TILES_BANK = 2
+                if col.state == TILE_INVISIBLE:
+                    list_of_new_tiles.append(col)
+        # generate random items from this list
+        random_list = random.sample(range(0, len(list_of_new_tiles)), how_many)
+        retrun_tile_list = []
+        # get these indices
+        for i in range(len(random_list)):
+            print(i, end=" ")
+            retrun_tile_list.append(list_of_new_tiles[random_list[i]])
+        return retrun_tile_list
+
+
     # display game dashboard
     # time
     # tiles x of y
@@ -273,8 +297,9 @@ class GameView(View):
     # when one is placed on grid : de count
     # get a random from what is left by state of tile
     #
-    def display_drag_tiles(self):
-        print()
+    def display_drag_tiles_container(self,number_to_generate):
+        tiles_in_container = self.generate_tiles_in_container(number_to_generate)
+        self.drag_tiles_container.display_tiles_in_container(tiles_in_container)
 
     def render(self):
         if self.level.id < LEVEL_MASTER:
@@ -284,8 +309,9 @@ class GameView(View):
             #self.display_test_tiles()
             self.display_tiles()
             #self.display_drag_tiles()
+
         self.display_dash_board()
-        self.display_drag_tiles()
+        #self.display_drag_tiles_container(1)
 
     def transition(self):
         return self.transitionToState

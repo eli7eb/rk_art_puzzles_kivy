@@ -8,23 +8,36 @@
 # check for collision with grid -
 # display border when dragged
 
-
 import os, os.path
-import pygame
-
-
 import pygame
 from pygame.locals import *
 
-TEXT_COLOR = pygame.Color(255, 255, 255)
-
 
 class DragContainer:
-    def __init__(self, screen, text_pos_x, text_pos_y, spacer_size):
+    def __init__(self, screen, pos_x, spacer_size):
+        print ('DragContainer')
+
         self.screen = screen
-        self.text_pos_x = text_pos_x
-        self.text_pos_y = text_pos_y
+        self.x_pos = pos_x
         self.spacer_size = spacer_size
 
+    def draw_border(self):
+        print('draw_border')
+
     def prepare(self):
-        self.font = pygame.font.SysFont("comicsansmsttf", 40)
+        #self.font = pygame.font.SysFont("comicsansmsttf", 40)
+        print('prepare')
+
+    def display_tiles_in_container(self,tiles_list):
+        print('display_tiles_in_container')
+        # display the tiles vertically
+        x = self.x_pos + self.spacer_size
+        y = self.spacer_size
+        for tile in tiles_list:
+            # calculate x y pos
+            # get the image
+            print('')
+            # increment y pos by tile size + spacer size
+            display_tile = tile.image
+            self.screen.blit(display_tile, (x, y))
+            y += tile.size + self.spacer_size

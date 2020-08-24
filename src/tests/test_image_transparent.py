@@ -17,13 +17,13 @@ clock = pygame.time.Clock()
 crashed = False
 
 def show_image(x, y):
-    im = pygame.transform.scale(pygame.image.load("rk_background.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+    im = pygame.transform.scale(pygame.image.load("milkmaid.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
     gameDisplay.blit(im, (x, y))
 
 def show_image_resize(x,y):
     desired_size = 468
-    im_pth = "rk_background.png"
-    # img = Image.open("rk_background.png")
+    im_pth = "milkmaid.png"
+    # img = Image.open("milkmaid.png")
     im = Image.open(im_pth)
     old_size = im.size  # old_size[0] is in (width, height) format
 
@@ -52,7 +52,7 @@ def show_image_resize(x,y):
 # then change alpha
 # then display
 def show_image_transparant(x, y):
-    img = Image.open("rk_background.png")
+    img = Image.open("milkmaid.png")
     img = img.convert('RGBA')
     img = img.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
     data = img.getdata()  # you'll get a list of tuples

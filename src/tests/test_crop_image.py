@@ -12,7 +12,7 @@ from PIL import Image
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
 #  os.path.join("assets",
-im = pygame.transform.scale(pygame.image.load("rk_background.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+im = pygame.transform.scale(pygame.image.load("milkmaid.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 screen.blit(im, (0, 0))
 # Setting the points for cropped image

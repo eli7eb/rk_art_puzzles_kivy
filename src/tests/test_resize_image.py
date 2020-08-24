@@ -33,8 +33,8 @@ def NumberOfSquares(x, y):
 
 
 # Driver Code
-im_pth = "rk_background.png"
-# img = Image.open("rk_background.png")
+im_pth = "milkmaid.png"
+# img = Image.open("mailmaid.png")
 im = Image.open(im_pth)
 old_size = im.size  # old_size[0] is in (width, height) format
 

@@ -17,7 +17,7 @@ class MainMenu:
         run = True
         mainClock = pygame.time.Clock()
         while run:
-            BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "rk_background.png")), (self.bg_width, self.bg_height))
+            BG = pygame.transform.scale(pygame.image.load(os.path.join("assets", "milkmaid.png")), (self.bg_width, self.bg_height))
             self.screen.blit(BG, (0, 0))
             title_label = title_font.render("Game Menu", 1, (255, 255, 255))
             font = pygame.font.SysFont(None, 20)
