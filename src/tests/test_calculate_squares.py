@@ -1,8 +1,11 @@
-
+import sys
 import os, os.path
 import random
 
 import pygame
+
+from pathlib import Path
+from pygame.math import Vector2
 
 from pygame.locals import *
 import math
@@ -100,11 +103,12 @@ def fit_squares(im, num_tiles):
     num_rows = int(height / size)
     return size, num_cols, num_rows
 
+
 def show_image_resize(x,y):
     desired_size = 468
-    im_pth = "milkmaid.png"
+
     # img = Image.open("milkmaid.png")
-    im = Image.open(im_pth)
+    im = getLoadedImage()
     old_size = im.size  # old_size[0] is in (width, height) format
     # I    have    the    final    image: 2    considerations:
     # need to resize and keep aspect ratio - i have a maximum of size I can use
@@ -147,7 +151,7 @@ def show_image_resize(x,y):
 # then change alpha
 # then display
 def show_image_transparant(x, y):
-    img = Image.open("milkmaid.png")
+    img = getLoadedImage()
     img = img.convert('RGBA')
     img = img.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
     data = img.getdata()  # you'll get a list of tuples
@@ -317,10 +321,54 @@ def display_tiles(tiles_grid):
 
 def getLoadedImage():
     im_pth = "milkmaid.png"
+    base_path = Path(__file__).parent.resolve()
+    file_path = (base_path / im_pth).resolve()
+
     # show_image()
     # img = Image.open("milkmaid.png")
-    im = Image.open(im_pth)
+    im = Image.open(file_path)
     return im
+
+# return the tile where the mouse is on
+def return_tile_at_pos(x_pos,y_pos):
+    print ('return_tile_at_pos')
+    x_counter = 0
+    y_counter = 0
+    found = False
+    print('display_tile')
+    for row in matrix:
+        for col in row:
+            # row_index is screen spacer and tile size times row
+            # print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
+            #                                                 str(col.coords[1])))
+
+            # print('row_spacer {} col_spacer {}'.format(str(row_spacer), str(col_spacer)))
+
+            loc_tuple = locations_matrix[x_counter][y_counter]
+
+            x = int(loc_tuple[0])
+            y = int(loc_tuple[1])
+            # # TODO set the Tile object state
+            # tile.y = y
+            # tile.state = TILE_ON_BOARD_TEST
+            print('event pos x {} y {} tile pos y {} x {}'.format(str(mouse_x),str(mouse_y),str(y), str(x)))
+            if mouse_x > x and mouse_x < x+tile_size and mouse_y > y and mouse_y < y + tile_size:
+                found = True
+                return col
+            else:
+                y_counter += 1
+                if y_counter > num_cols - 1:
+                    y_counter = 0
+        x_counter += 1
+    print ("I shoule never get here and there must be a better way to do that !!")
+
+def init_graphics():
+    draw_border()
+    draw_grid_of_rects()
+
+def redraw_graphics():
+    gameDisplay.fill(white)
+    init_graphics()
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('test transparent')
@@ -336,19 +384,44 @@ tile_size = tile_tuple[0]
 num_cols = tile_tuple[1]
 num_rows = tile_tuple[2]
 locations_matrix = [[1] * num_cols for n in range(num_rows)]
-draw_border()
-draw_grid_of_rects()
+init_graphics()
 matrix = crop_image_to_array()
 display_tiles(matrix)
+clock = pygame.time.Clock()
+running = True
+mouse_pressed = False
+selected_tile = None
+while running:
 
-while not crashed:
     for event in pygame.event.get():
+        print ('event type {}'.format(str(event.type)))
         if event.type == pygame.QUIT:
-            crashed = True
-
-
-    pygame.display.update()
-    clock.tick(60)
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                selected_tile = return_tile_at_pos(mouse_x, mouse_y)
+                print('mouse MOUSEBUTTONDOWN ' + str(selected_tile))
+                mouse_pressed = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                selected_tile = None
+                mouse_pressed = False
+                print('mouse MOUSEBUTTONUP ' + str(selected_tile))
+        elif event.type == pygame.MOUSEMOTION and mouse_pressed:
+            print('pygame.MOUSEMOTION ' + str(selected_tile))
+            if selected_tile:
+                print ('mouse motion ' + str(event.rel))
+                delta_x = event.rel[0]
+                delta_y = event.rel[1]
+                pos_x = event.pos[0]
+                pos_y = event.pos[1]
+                redraw_graphics()
+                display_tiles(matrix)
+                gameDisplay.blit(selected_tile, (pos_x, pos_y))
+                pygame.display.flip()
+    clock.tick(30)
+    pygame.display.flip()
 
 pygame.quit()
-quit()
+sys.exit()
