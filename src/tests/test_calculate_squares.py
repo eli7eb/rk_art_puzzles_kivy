@@ -11,6 +11,16 @@ from pygame.locals import *
 import math
 from PIL import Image
 
+
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, image):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(center=pos)
+        self.x = pos[0]
+        self.y = pos[1]
+
+
 pygame.init()
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -213,8 +223,9 @@ def crop_image_to_array():
                 counter += 1
                 coords = getXYCoordinatesFromBox(box, chopsize)
                 print("coords {}".format(str(coords)))
-
-                tile_matrix[coords[0]][coords[1]] = py_image
+                # loc_tuple = locations_matrix[x_counter][y_counter]
+                tile = Tile((x0,y0),py_image)
+                tile_matrix[coords[0]][coords[1]] = tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
             else:
                 print ('error on crop')
@@ -282,7 +293,7 @@ def draw_grid_of_rects():
             pygame.draw.rect(gameDisplay, grid_color, rect, SCREEN_SPACER_SIZE)
     print('end')
 
-def display_tiles(tiles_grid):
+def display_tiles():
     # check for grid tiles
     counter = 0
 
@@ -294,8 +305,8 @@ def display_tiles(tiles_grid):
 
     x_counter = 0
     y_counter = 0
-    print('display_tile')
-    for row in tiles_grid:
+    print('display_tiles')
+    for row in matrix:
         for col in row:
             # row_index is screen spacer and tile size times row
             #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
@@ -310,14 +321,20 @@ def display_tiles(tiles_grid):
             # # TODO set the Tile object state
             # tile.y = y
             # tile.state = TILE_ON_BOARD_TEST
-            print('y {} x {}'.format(str(y), str(x)))
-            py_image = col
-            gameDisplay.blit(py_image, (y, x))
+            # print('y {} x {}'.format(str(y), str(x)))
+            # py_image = col
+            rect = col.image.get_rect()
+            rect.center = y+tile_size//2, x+tile_size//2 # y // 2, x // 2
+            gameDisplay.blit(col.image, rect)
+            pygame.draw.rect(gameDisplay, (255, 255, 255, 127), rect, 1)
+            # gameDisplay.blit(py_image, (y, x))
             # self.tiles_grid[col.y_index][col.x_index] = tile
             y_counter += 1
             if y_counter > num_cols-1:
                 y_counter = 0
         x_counter += 1
+    print('display_tiles end')
+
 
 def getLoadedImage():
     im_pth = "milkmaid.png"
@@ -330,10 +347,12 @@ def getLoadedImage():
     return im
 
 # return the tile where the mouse is on
-def return_tile_at_pos(x_pos,y_pos):
+def return_tile_at_pos(pos):
     print ('return_tile_at_pos')
     x_counter = 0
     y_counter = 0
+    mouse_x = pos[0]
+    mouse_y = pos[1]
     found = False
     print('display_tile')
     for row in matrix:
@@ -360,7 +379,7 @@ def return_tile_at_pos(x_pos,y_pos):
                 if y_counter > num_cols - 1:
                     y_counter = 0
         x_counter += 1
-    print ("I shoule never get here and there must be a better way to do that !!")
+    print ("not found - mouse down elsewhere")
 
 def init_graphics():
     draw_border()
@@ -368,7 +387,25 @@ def init_graphics():
 
 def redraw_graphics():
     gameDisplay.fill(white)
-    init_graphics()
+    #init_graphics()
+    display_tiles()
+
+# check if drag in grid limit
+def in_grid_limit(rect, event):
+
+    print('in_grid_limit w {} h {}'.format(str(level['width']),str(level['height'])))
+    print('rect pos x {} y {} event pos {} event rel {}'.format(str(rect.x),str(rect.y),str(event.pos),str(event.rel)))
+
+    pos = event.pos
+    rel = event.rel
+    if rect.x + tile_size + rel[0] <= level['width'] and rect.x + rel[0] > 0 and \
+            rect.y + tile_size + rel[1] <= level['height'] and rect.y + rel[1] > 0:
+        print('INSIDE')
+        return True;
+    print('OUTSIDE')
+    return False
+    print('in_grid_limit end')
+
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('test transparent')
@@ -386,11 +423,12 @@ num_rows = tile_tuple[2]
 locations_matrix = [[1] * num_cols for n in range(num_rows)]
 init_graphics()
 matrix = crop_image_to_array()
-display_tiles(matrix)
+display_tiles()
 clock = pygame.time.Clock()
 running = True
-mouse_pressed = False
+moving = False
 selected_tile = None
+rect = None
 while running:
 
     for event in pygame.event.get():
@@ -399,29 +437,38 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                selected_tile = return_tile_at_pos(mouse_x, mouse_y)
-                print('mouse MOUSEBUTTONDOWN ' + str(selected_tile))
-                mouse_pressed = True
+                # get the rect of where I stand
+                selected_tile = return_tile_at_pos(event.pos)
+                if selected_tile:
+                    rect = selected_tile.rect
+                    print('mouse MOUSEBUTTONDOWN ' + str(selected_tile))
+                    moving = True
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 selected_tile = None
-                mouse_pressed = False
+                moving = False
                 print('mouse MOUSEBUTTONUP ' + str(selected_tile))
-        elif event.type == pygame.MOUSEMOTION and mouse_pressed:
-            print('pygame.MOUSEMOTION ' + str(selected_tile))
-            if selected_tile:
-                print ('mouse motion ' + str(event.rel))
-                delta_x = event.rel[0]
-                delta_y = event.rel[1]
-                pos_x = event.pos[0]
-                pos_y = event.pos[1]
-                redraw_graphics()
-                display_tiles(matrix)
-                gameDisplay.blit(selected_tile, (pos_x, pos_y))
-                pygame.display.flip()
+        elif event.type == pygame.MOUSEMOTION and moving:
+            print ('mouse motion ' + str(event.rel))
+            pos_x = event.pos[0]
+            pos_y = event.pos[1]
+            if (in_grid_limit(rect, event)):
+                # redraw_graphics()
+                # display_tiles(matrix)
+                # rect = selected_tile.image.get_rect()
+                rect.move_ip(event.rel)
+                #rect.center = pos_x + tile_size // 2, pos_y + tile_size // 2  # y // 2, x // 2
+
+                #pygame.draw.rect(gameDisplay, (255, 255, 255, 127), rect, 1)
+                # gameDisplay.blit(selected_tile, (pos_x, pos_y))
+                #pygame.display.flip()
+    if (selected_tile and rect):
+        redraw_graphics()
+        gameDisplay.blit(selected_tile.image, rect)
+        print('pygame.before update')
+        pygame.draw.rect(gameDisplay, (255, 255, 255, 127), rect, 1)
     clock.tick(30)
-    pygame.display.flip()
+    pygame.display.update()
 
 pygame.quit()
 sys.exit()
