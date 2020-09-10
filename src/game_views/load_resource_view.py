@@ -234,7 +234,7 @@ class LoadingView(View):
                     print("coords {}".format(str(coords)))
                     # TODO fix this
                     py_image_t = py_image.copy() # self.get_tile_blurred(py_image)
-                    py_tile = Tile(py_image, py_image_t, chopsize, x0, y0, coords, TILE_INVISIBLE)
+                    py_tile = Tile(py_image,  chopsize, (x0, y0), coords, TILE_INVISIBLE)
 
                     tile_matrix[coords[0]][coords[1]] = py_tile
                     # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
@@ -248,7 +248,7 @@ class LoadingView(View):
                 counter += 1
                 coords = getXYCoordinatesFromBox(box, chopsize)
 
-                py_tile = Tile(py_image, py_image_t, chopsize, x0, y0, coords, TILE_INVISIBLE)
+                py_tile = Tile(py_image, chopsize, (x0, y0), coords, TILE_INVISIBLE)
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))

@@ -16,7 +16,7 @@ from pygame.locals import *
 class DragContainer:
     def __init__(self, screen, pos_x, spacer_size):
         print ('DragContainer')
-
+        self.tiles_in_container = None
         self.screen = screen
         self.x_pos = pos_x
         self.spacer_size = spacer_size
@@ -24,20 +24,31 @@ class DragContainer:
     def draw_border(self):
         print('draw_border')
 
-    def prepare(self):
+    def prepare(self,tiles_list):
         #self.font = pygame.font.SysFont("comicsansmsttf", 40)
         print('prepare')
+        self.tiles_list = tiles_list
 
-    def display_tiles_in_container(self,tiles_list):
+    def update_tiles_in_container(self,state):
+        print ('update_tiles_in_container')
+        self.display_tiles_in_container()
+        print('update_tiles_in_container end')
+
+    def display_tiles_in_container(self):
         print('display_tiles_in_container')
         # display the tiles vertically
         x = self.x_pos + self.spacer_size
         y = self.spacer_size
-        for tile in tiles_list:
+        # py_tile = Tile(py_image,  chopsize, (x0, y0), coords, TILE_INVISIBLE)
+        for tile in self.tiles_list:
             # calculate x y pos
             # get the image
             print('')
             # increment y pos by tile size + spacer size
-            display_tile = tile.image
-            self.screen.blit(display_tile, (x, y))
+            rect = tile.rect
+            rect.center = x + tile.size // 2, y + tile.size // 2  # y // 2, x // 2
+            self.screen.blit(tile.image, rect)
+            pygame.draw.rect(self.screen, (255, 255, 255, 127), rect, 1)
+            #display_tile = tile.image
+            #self.screen.blit(display_tile, (x, y))
             y += tile.size + self.spacer_size

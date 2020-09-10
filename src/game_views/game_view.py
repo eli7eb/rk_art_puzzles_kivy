@@ -126,7 +126,8 @@ class GameView(View):
         self.draw_grid_of_rects()
         self.display_tiles()
         self.display_dash_board()
-        self.display_drag_tiles_container(4)
+        tiles_in_container = self.generate_tiles_in_container(4)
+        self.drag_tiles_container.prepare(tiles_in_container)
 
     # draw grid of rects around the tiles
     # last row is not the same size as the previous TODO fix it
@@ -197,7 +198,14 @@ class GameView(View):
                 # tile.y = y
                 # tile.state = TILE_ON_BOARD_TEST
                 display_tile = col.image
-                self.screen.blit(display_tile, (y, x))
+
+                rect = col.rect
+                rect.center = y + col.size // 2, x + col.size // 2  # y // 2, x // 2
+                self.screen.blit(col.image, rect)
+                pygame.draw.rect(self.screen, (255, 255, 255, 127), rect, 1)
+
+
+                # self.screen.blit(display_tile, (y, x))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 y_counter += 1
                 if y_counter > self.num_cols - 1:
@@ -292,14 +300,15 @@ class GameView(View):
     def display_dash_board(self):
         self.dashboard.set_title_info(self.title,self.long_title)
 
-    # start from random number of vertical tiles
-    # get random
-    # when one is placed on grid : de count
-    # get a random from what is left by state of tile
-    #
-    def display_drag_tiles_container(self,number_to_generate):
-        tiles_in_container = self.generate_tiles_in_container(number_to_generate)
-        self.drag_tiles_container.display_tiles_in_container(tiles_in_container)
+    # update the tiles
+    # until one is dragged to the grid there is no change
+    # when one is placed on the grid
+    # get a new one in place until done
+    def update_drag_tiles_container(self, state):
+        print ('update_drag_tiles_container')
+        self.drag_tiles_container.update_tiles_in_container(1)
+        print('update_drag_tiles_container end')
+
 
     def render(self):
         if self.level.id < LEVEL_MASTER:
@@ -311,7 +320,7 @@ class GameView(View):
             #self.display_drag_tiles()
 
         self.display_dash_board()
-        #self.display_drag_tiles_container(1)
+        self.update_drag_tiles_container(1)
 
     def transition(self):
         return self.transitionToState
