@@ -29,6 +29,7 @@ class DragContainer:
         print('prepare')
         self.tiles_list = tiles_list
 
+    # based on state - decide if to draw as is or change the tiles list
     def update_tiles_in_container(self,state):
         print ('update_tiles_in_container')
         self.display_tiles_in_container()
@@ -43,7 +44,6 @@ class DragContainer:
         for tile in self.tiles_list:
             # calculate x y pos
             # get the image
-            print('')
             # increment y pos by tile size + spacer size
             rect = tile.rect
             rect.center = x + tile.size // 2, y + tile.size // 2  # y // 2, x // 2

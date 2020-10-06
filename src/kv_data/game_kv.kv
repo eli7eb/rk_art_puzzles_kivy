@@ -1,0 +1,108 @@
+#:kivy 1.10.1
+#:import hex kivy.utils.get_color_from_hex
+#:set color_1_beige hex('#b6b9ab')
+#:set color_2_beige hex('#dddccc')
+#:set color_3_beige hex('#d2d2cc')
+#:set color_1_grey hex('#a9a9a3')
+#:set color_2_grey hex('#8e928a')
+#:set color_3_grey hex('#7d7b7b')
+#:set color_4_grey hex('#6a6e6d')
+#:set color_5_grey hex('#49474b')
+#:set color_1_light_brown hex('#cfb16f')
+#:set color_2_light_brown hex('#ece1c7')
+#:set color_3_light_brown hex('#ccba91')
+#:set color_1_light_brown_alpha hex('#f2ead9')
+#:set color_2_light_brown_alpha hex('#f8f5ec')
+#:set color_3_light_brown_alpha hex('#efe9dc')
+
+#:set color_4_light_brown hex('#b49660')
+#:set color_1_brown hex('#874a35')
+#:set color_2_brown hex('#a87d5d')
+#:set color_3_brown hex('#d4a87d')
+#:set color_4_brown hex('#b97463')
+
+<TitleScreen>:
+    FloatLayout:
+        bcolor: color_1_light_brown
+        canvas.before:
+            Color:
+                rgba: (0, 0, 0, 1)  if self.bcolor is None else self.bcolor
+            Rectangle:
+            # self here refers to the widget i.e BoxLayout
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: 'RK Puzzles'
+            font_size: 0.3*self.height
+            pos_hint: {'x':0.05, 'top':0.95}
+            size_hint: 1.0, 0.15
+        BoxLayout:
+            pos_hint: {'x':0.2, 'top':0.6}
+            size_hint: 0.6, 0.3
+            spacing:10
+            orientation: 'vertical'
+            btn_color_2:color_2_light_brown
+            btn_color_3:color_3_light_brown
+            BoxLayout:
+                btn_color_1:color_1_light_brown
+                btn_color_1_alpha:color_1_light_brown_alpha
+                orientation: 'horizontal'
+                spacing:5
+                TextInput:
+                    multiline:False
+                    id: input
+                    hint_text:'Enter mood or enter for random'
+                    on_text_validate: root.process_text()
+                Button:
+                    text: 'Start Game'
+                    background_color: (0, 0, 0, 1)  if self.parent.btn_color_1 is None else self.parent.btn_color_1
+                    on_press: (0, 0, 0, 1)  if self.parent.btn_color_1_alpha is None else self.parent.btn_color_1_alpha
+                    on_release: root.switch_to_load_data_screen(self.input.text)
+            Button:
+                text: 'Options'
+                background_color: (0, 0, 0, 1) if self.parent.btn_color_2 is None else self.parent.btn_color_2
+                on_release: root.switch_to_game_screen()
+            Button:
+                text: 'About'
+                background_color: (0, 0, 0, 1) if self.parent.btn_color_3 is None else self.parent.btn_color_3
+                on_release: root.switch_to_game_screen()
+<GameScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 0, 0, 0.1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        pos_hint: {'x':0.05, 'top':0.95}
+        size_hint: 0.9, 0.9
+        orientation: 'vertical'
+        Label:
+            text: ''
+            size_hint: 1.0, 0.80
+        FloatLayout:
+            size_hint: 1.0, 0.20
+            orientation: 'horizontal'
+            Button:
+                text: 'Back to Title'
+                pos_hint: {'x': 0.75, 'center_y': 0.5}
+                size_hint: 0.20, 0.5
+                on_release: root.switch_to_title_screen()
+
+<LoadDataScreen>:
+    FloatLayout:
+        bcolor: color_1_light_brown
+        canvas.before:
+            Color:
+                rgba: (0, 0, 0, 1)  if self.bcolor is None else self.bcolor
+            Rectangle:
+            # self here refers to the widget i.e BoxLayout
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: 'Loading data'
+            font_size: 0.3*self.height
+            pos_hint: {'x':0.05, 'top':0.95}
+            size_hint: 1.0, 0.15

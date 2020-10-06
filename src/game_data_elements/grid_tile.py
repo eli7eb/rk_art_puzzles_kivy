@@ -21,3 +21,4 @@ class Tile(pygame.sprite.Sprite):
         self.rect.centerx = self.x_pos
         self.rect.bottom = self.y_pos
         self.speedy = -15
+        self.hitbox = (self.x,self.y,self.x+size,self.y+size)

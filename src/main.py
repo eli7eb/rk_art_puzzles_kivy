@@ -27,13 +27,9 @@ from src.game_consts.game_constants import *
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 20)
-WIDTH, HEIGHT = 750, 750
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Puzzle")
 level = levels[1]
 # load resources
-# constants
-WIDTH, HEIGHT = 750, 750
 
 
 titleFont = pygame.font.SysFont("comicsansmsttf", 60)
@@ -120,7 +116,7 @@ def main():
         lives_label = main_font.render(f"Lives: {lives}", 1, (255, 255, 255))
         level_label = main_font.render(f"Level: {level}", 1, (255, 255, 255))
         screen.blit(lives_label, (10, 10))
-        screen.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
+        screen.blit(level_label, (SCREEN_WIDTH - level_label.get_width() - 10, 10))
         # draw the tiles
         # draw the input tiles bar
         # draw dashboard
