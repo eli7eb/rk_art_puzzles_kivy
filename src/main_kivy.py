@@ -1,9 +1,7 @@
 from functools import partial
 
+
 import kivy
-
-from src.game_utils.game_logger import RkLogger
-
 kivy.require('1.10.0')
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -13,16 +11,21 @@ from kivy.config import Config
 from kivy.uix.screenmanager import FadeTransition
 from kivy.uix.screenmanager import Screen
 from kivy.uix.screenmanager import ScreenManager
+from kivy.core.window import Window
 from kivy.lang import Builder
+
 from src.settings.kivy import KivySettings
 from src.event.command.scene import SceneChangeCommand
 from src.event.command.scene import SceneChangeController
-from kivy.core.window import Window
+
 from src.screen.game import GameScreen
+from src.game_consts.game_constants import *
 from src.screen.load_data import LoadDataScreen
 from src.game_utils.game_logger import RkLogger
+
+play_level = None
 class MainWindow(ScreenManager):
-    _mood_str = None
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(**kwargs)
@@ -51,13 +54,16 @@ class MainWindow(ScreenManager):
 
         # if load screen pass the mood
         if scene_name == "load_data_screen":
-            _mood_str = args[0]
+            play_level = levels[1]
         # Create a new SceneChangeCommand with the new scene.
         new_command = SceneChangeCommand(actor=self, scene=scene_name)
 
         # Add the new command to the contorller.
         self.scene_change_controller.add_command(new_command)
 
+    def get_level(self):
+
+        return levels[1]
 
     def update(self, dt):
         """Tries to execute periodically.
@@ -72,17 +78,16 @@ class TitleScreen(Screen):
         super().__init__(**kwargs)
 
     def process_text(self):
-        _mood_str = text = self.ids.input.text
         logger = RkLogger.__call__().get_logger()
-        logger.info("mood_str " + _mood_str)
-        self.switch_to_load_data_screen(_mood_str)
+        logger.info("mood_str " + self.ids.input.text)
+        self.switch_to_load_data_screen()
 
-    def switch_to_load_data_screen(self,_mood_str):
+    def switch_to_load_data_screen(self):
         """Close this widget and open the Game Screen.
         """
 
         # Ask the parent to switch to the Game screen
-        self.parent.change_scene("load_data_screen",_mood_str)
+        self.parent.change_scene("load_data_screen")
 
     def switch_to_game_screen(self):
         """Close this widget and open the Game Screen.

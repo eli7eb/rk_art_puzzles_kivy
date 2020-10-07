@@ -4,6 +4,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
+from src.game_utils.game_load_data import LoadingData
 from src.game_utils.game_logger import RkLogger
 
 
@@ -26,6 +27,10 @@ class LoadDataScreen(Screen):
         # Ask the parent to switch to the Game screen
         self.parent.change_scene("title_screen",None)
 
+    def next(self, dt):
+        if self.ids.load_progress_bar.value >= 100:
+            return False
+        self.ids.load_progress_bar.value += 1
 
     def update(self, dt):
         # Stop if this window isn't active.
@@ -33,10 +38,36 @@ class LoadDataScreen(Screen):
             return
         # get mood if not there - get a random one
         try:
-            _mood_str = text = self.manager.screens[0].ids.input.text
+            mood_str = self.manager.screens[0].ids.input.text
         except:
             self.logger.error("no mood str")
-        self.load_data(dt)
 
-    def load_data(self, dt):
-        pass
+        try:
+            level = self.parent.get_level()
+        except:
+            self.logger.error("where is level")
+        self.ids.load_progress_bar.value = 1
+        try:
+            Clock.schedule_interval(self.next, 1 / 25)
+            self.load_data(mood_str,level)
+        except:
+            pass
+        finally:
+            Clock.schedule_interval(self.next, 1 / 25)
+
+            # load data
+    # check mood validation
+    def process_text(self):
+        logger = RkLogger.__call__().get_logger()
+        logger.info("mood_str " + self.ids.input.text)
+        self.switch_to_load_data_screen()
+
+    def load_data(self, mood_str,level):
+        self.ids.progress_label.text = "Searching image for " + mood_str
+        ld = LoadingData(mood_str,level)
+        self.ids.progress_label.text = "Loading image"
+        ld.retrieve_image_data()
+        image_data = ld.get_image()
+        title, long_title = ld.get_image_info()
+        self.ids.progress_label.text = "Get Ready to solve " + title
+

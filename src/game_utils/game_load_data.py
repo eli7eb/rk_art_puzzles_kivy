@@ -1,3 +1,4 @@
+# load the image file from RK
 import random
 import math
 
@@ -22,13 +23,14 @@ from src.game_utils.game_logger import RkLogger
 
 LOADING_ART_TEXT_COLOR = pygame.Color(242, 214, 179, 95)
 
+
 # count number of spaces in grid is calculated as number of tiles horizontally -1
 # count number of spaces in grid is calculated as number of tiles vertically -1
 # function to validate the cropsize
 # values are first 2 are row,col on the left side
 # last 2 are bottom right on the right side
 # TODO if error exit game ? or find new image ?
-def validate_crop_size(image,tile_size):
+def validate_crop_size(image, tile_size):
     w = abs(image.width - tile_size)
     h = abs(image.height - tile_size)
     if w > 5 or h > 5:
@@ -42,22 +44,19 @@ def getXYCoordinatesFromBox(box, tile_size):
     logger.info("box {}".format(box))
 
     # find the middle point
-    x = box[0] + tile_size/2
-    y = box[1] + tile_size/2
-    x_index = int(x/tile_size)
-    y_index = int(y/tile_size)
+    x = box[0] + tile_size / 2
+    y = box[1] + tile_size / 2
+    x_index = int(x / tile_size)
+    y_index = int(y / tile_size)
     return y_index, x_index
 
 
 # TODO add are you sure
-class LoadingView(View):
+class LoadingData():
     # Dummy screen that just quits the game (after quitting screen has been shown)
-    def __init__(self, screen,bg_color,level_name):
-        View.__init__(self, screen,bg_color)
-        self.level_name = level_name
-        self.level = levels[self.level_name]
-        self.title = None
-        self.long_title = None
+    def __init__(self, mood_str,level):
+        self.mood_str = mood_str
+        self.play_level = level
 
     # call the game utils to load the image from list of images returned
     # resize image
@@ -76,8 +75,8 @@ class LoadingView(View):
             self.long_title = art_dict['longTitle']
             # at this stage I need to know the final image size
             art_tiles_obj = get_art_tiles.getArtImage()
-            #self.dashboard.set_title_info(art_dict)
-            art_image = GetArtImage(art_tiles_obj,SCREEN_WIDTH, SCREEN_HEIGHT)
+            # self.dashboard.set_title_info(art_dict)
+            art_image = GetArtImage(art_tiles_obj, SCREEN_WIDTH, SCREEN_HEIGHT)
             pygame_image, pil_image = art_image.getBitmapFromTiles()
             return pygame_image, pil_image
         else:
@@ -85,7 +84,7 @@ class LoadingView(View):
 
             local_art_key = random.choice(list(local_art.keys()))
             local_art_object = local_art[local_art_key]
-            
+
             base_path = Path(__file__).parent.resolve()
             file_path = (base_path / local_art_object['file']).resolve()
             local_pil_image = Image.open(file_path)
@@ -127,9 +126,6 @@ class LoadingView(View):
         py_image_t = pygame.image.fromstring(data_t, size_t, mode_t)
         return py_image_t
 
-
-
-
     # the squares need to be exactly the size to fit in the array
     # we need to decide which comes first the image size or the tiles size
     # on a beginner level I have 4 - 6
@@ -139,7 +135,7 @@ class LoadingView(View):
         logger = RkLogger.__call__().get_logger()
         logger.info("fit_squares")
         im = self.pil_image
-        num_tiles = self.level['num_tiles']
+        num_tiles = self.play_level.num_tiles
         width = im.width
         height = im.height
 
@@ -206,14 +202,13 @@ class LoadingView(View):
                     coords = getXYCoordinatesFromBox(box, chopsize)
                     print("coords {}".format(str(coords)))
                     # TODO fix this
-                    py_image_t = py_image.copy() # self.get_tile_blurred(py_image)
-                    py_tile = Tile(py_image,  chopsize, (x0, y0), coords, TILE_INVISIBLE)
+                    py_image_t = py_image.copy()  # self.get_tile_blurred(py_image)
+                    py_tile = Tile(py_image, chopsize, (x0, y0), coords, TILE_INVISIBLE)
 
                     tile_matrix[coords[0]][coords[1]] = py_tile
                     # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
                 else:
                     print('error on crop')
-
 
                 # PIL for transparant copy
 
@@ -225,7 +220,6 @@ class LoadingView(View):
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-
 
         return tile_matrix
 
@@ -245,31 +239,24 @@ class LoadingView(View):
         # width needs to accomodate the scroller
         # height needs to accomodate the dashboard
         # validate that the size is divided by tile_size
+
     def image_resize(self, im):
         grid_size_percent = 85
         original_width = SCREEN_WIDTH - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
         original_height = SCREEN_HEIGHT - OUTER_BORDER_SIZE * 2 + INNER_BORDER_SIZE
         # make the grid 80%
 
-        im_width = self.level['width']  # int(original_width * (grid_size_percent / 100))
-        im_height = self.level['height']  # int(original_height * (grid_size_percent / 100))
+        im_width = self.play_level.width  # int(original_width * (grid_size_percent / 100))
+        im_height = self.play_level.height  # int(original_height * (grid_size_percent / 100))
         im = im.resize((im_width, im_height), Image.LANCZOS)
         return im
 
         # get image and tiles grid
-    def prepare(self, mood_str, level):
-        if mood_str == '':
-            self.mood_str = self.getRandomSearchValue()
-        else:
-            self.mood_str = mood_str
-        self.transitionToState = None
 
-        # self.top_drag_grid_x = SCREEN_SPACER_SIZE
-        # self.top_drag_grid_y = SCREEN_SPACER_SIZE
-        # self.dash_board_position = [4, 3]
-        # self.drag_tiles_position = [4, 3]
-        #
-        # self.grid_size = (self.game_utils.grid_width, self.game_utils.grid_height)
+    def retrieve_image_data(self):
+        if self.mood_str == '':
+            self.mood_str = self.getRandomSearchValue()
+
 
         self.puzzle_image, im = self.getLoadedImage()
         self.pil_image = self.image_resize(im)
@@ -279,10 +266,8 @@ class LoadingView(View):
         num_cols = tile_tuple[1]
         num_rows = tile_tuple[2]
         locations_matrix = [[1] * num_cols for n in range(num_rows)]
-        #draw_border()
-        #draw_grid_of_rects()
-
-
+        # draw_border()
+        # draw_grid_of_rects()
 
         self.tiles_grid = self.crop_image_to_array(tile_tuple)
         # self.tiles_drag_grid = self.init_drag_tiles()
@@ -292,18 +277,4 @@ class LoadingView(View):
         # list_to_random = list(range(0, total_size))
         # self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
         # self.draw_grid()
-        self.transitionToState = VIEW_STATE_GAME_A
 
-    def render(self):
-        self.loading_msg = 'LOADING ART'
-        titleFont = pygame.font.SysFont("comicsansmsttf", 60)
-        loading_str = titleFont.render(self.loading_msg, True, LOADING_ART_TEXT_COLOR)
-        self.screen.fill(self.bg_color)
-        self.screen.blit(loading_str, [HALF_SCREEN_WIDTH - 150, HALF_SCREEN_HEIGHT - 150])
-
-    def transition(self):
-        return self.transitionToState
-
-    def clean(self):
-        transparent = (127, 127, 127)
-        self.screen.fill(transparent)

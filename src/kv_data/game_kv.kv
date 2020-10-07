@@ -92,6 +92,7 @@
 
 <LoadDataScreen>:
     FloatLayout:
+        orientation: 'vertical'
         bcolor: color_1_light_brown
         canvas.before:
             Color:
@@ -102,7 +103,17 @@
                 size: self.size
 
         Label:
-            text: 'Loading data'
+            id:progress_label
+            text: 'Loading Data Phase'
             font_size: 0.3*self.height
             pos_hint: {'x':0.05, 'top':0.95}
             size_hint: 1.0, 0.15
+            markup: True
+
+        ProgressBar:
+            id:load_progress_bar
+            value: .25
+            min: 0
+            max: 1
+            pos_hint: {'x':.1}
+            size_hint_x: .8
