@@ -47,20 +47,22 @@ class LoadDataScreen(Screen):
         except:
             self.logger.error("where is level")
         self.ids.load_progress_bar.value = 1
+        Clock.schedule_interval(self.next, 1 / 25)
         try:
-            Clock.schedule_interval(self.next, 1 / 25)
             self.load_data(mood_str,level)
         except:
             pass
         finally:
             Clock.schedule_interval(self.next, 1 / 25)
+        self.switch_to_game_screen()
 
-            # load data
-    # check mood validation
-    def process_text(self):
-        logger = RkLogger.__call__().get_logger()
-        logger.info("mood_str " + self.ids.input.text)
-        self.switch_to_load_data_screen()
+
+    def switch_to_game_screen(self):
+        """Close this widget and open the Game Screen.
+        """
+
+        # Ask the parent to switch to the Game screen
+        self.parent.change_scene("game_screen", None)
 
     def load_data(self, mood_str,level):
         self.ids.progress_label.text = "Searching image for " + mood_str
