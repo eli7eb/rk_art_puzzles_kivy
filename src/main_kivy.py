@@ -112,8 +112,15 @@ if __name__ == '__main__':
     # Config.set('graphics', 'width', '200')
     # Config.set('graphics', 'height', '800')
 
-    settings = KivySettings(filename="user/settings.ini")
-    window_sizes = (600,800) #Window.size
+    # 0 being off 1 being on as in true / false
+    # you can use 0 or 1 && True or False
+    Config.set('graphics', 'resizable', '0')
+
+    # fix the width of the window
+    Config.set('graphics', 'width', '600')
+
+    # fix the height of the window
+    Config.set('graphics', 'height', '800')
 
     MainKivyRKrApp().run()
 
