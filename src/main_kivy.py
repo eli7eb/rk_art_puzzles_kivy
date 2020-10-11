@@ -22,6 +22,8 @@ from src.screen.game import GameScreen
 from src.game_consts.game_constants import *
 from src.screen.load_data import LoadDataScreen
 from src.game_utils.game_logger import RkLogger
+from src.kivy_game_widgets.kivy_tiles_grid import GameTilesGrid
+
 
 play_level = None
 class MainWindow(ScreenManager):
@@ -56,7 +58,7 @@ class MainWindow(ScreenManager):
         if scene_name == "load_data_screen":
             play_level = levels[1]
         # Create a new SceneChangeCommand with the new scene.
-        new_command = SceneChangeCommand(actor=self, scene=scene_name)
+        new_command = SceneChangeCommand(actor=self, scene=scene_name, args=args)
 
         # Add the new command to the contorller.
         self.scene_change_controller.add_command(new_command)

@@ -3,7 +3,7 @@ import random
 import math
 
 from pathlib import Path
-
+from kivy.uix.widget import Widget
 from src.game_consts.game_constants import *
 from src.game_views.views import View
 from src.rk_communication.rk_http_requests import *
@@ -52,11 +52,18 @@ def getXYCoordinatesFromBox(box, tile_size):
 
 
 # TODO add are you sure
-class LoadingData():
+class LoadingGameData(Widget):
     # Dummy screen that just quits the game (after quitting screen has been shown)
-    def __init__(self, mood_str,level):
-        self.mood_str = mood_str
-        self.play_level = level
+    def __init__(self, d,**kwargs):
+        super(LoadingGameData, self).__init__(**kwargs)
+        #self.mood_str = mood_str
+        #self.play_level = level
+        self.register_event_type('on_load_data_complete')
+
+    def trigger_custom_event(self, *args):
+        self.retrieve_image_data()
+        self.dispatch('on_load_data_complete', 'test message')
+
 
     # call the game utils to load the image from list of images returned
     # resize image
@@ -78,6 +85,8 @@ class LoadingData():
             # self.dashboard.set_title_info(art_dict)
             art_image = GetArtImage(art_tiles_obj, SCREEN_WIDTH, SCREEN_HEIGHT)
             pygame_image, pil_image = art_image.getBitmapFromTiles()
+            remote_obj = {id:'remote',pygame_image:pygame_image,pil_image:pil_image}
+            self.dispatch('on_load_data_complete', remote_obj)
             return pygame_image, pil_image
         else:
             # for local I pick one of three options
@@ -104,7 +113,14 @@ class LoadingData():
             size = local_pil_image.size
             data = local_pil_image.tobytes()
             local_pygame_image = pygame.image.fromstring(data, size, mode)
+
+            remote_obj = {id: 'remote', local_pygame_image: local_pygame_image, local_pil_image: local_pil_image}
+            self.dispatch('on_load_data_complete', remote_obj)
             return local_pygame_image, local_pil_image
+
+    def on_load_data_complete(self, *args):
+        pass
+
 
     def get_tile_blurred(self, py_image):
         pil_image_rgba = py_image.copy()

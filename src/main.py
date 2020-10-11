@@ -87,7 +87,7 @@ while True:
             mood_str = currentViewState.textinput.get_text()
             currentViewState.clean()
         elif currentViewId == VIEW_STATE_LOADING:
-            image_grid_data = currentViewState.get_image_data()
+            image_grid_data = currentViewState.get_image_grid()
             image_data = currentViewState.get_image()
             title,long_title = currentViewState.get_image_info()
             currentViewState.clean()

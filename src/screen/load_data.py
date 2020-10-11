@@ -1,24 +1,38 @@
+import random
 from functools import partial
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
-from src.game_utils.game_load_data import LoadingData
+from src.kivy_game_widgets.kivy_game_load_data import LoadingGameData
 from src.game_utils.game_logger import RkLogger
-
+from src.game_consts.game_constants import MOOD_IDEAS
 
 class LoadDataScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(**kwargs)
         self.logger = RkLogger.__call__().get_logger()
-        Clock.schedule_interval(
-            partial(
-                LoadDataScreen.update,
-                self
-            ),
-            1.0 / 30.0
-        )
+
+    def on_enter(self):
+        RkLogger.__call__().get_logger().info('on_enter')
+        Clock.schedule_once(self.load_data)
+
+    def build(self):
+        pass
+
+    def load_data(self, dt):
+        mood_str = self.manager.screens[0].ids.input.text
+        if (mood_str == ''):
+            mood_str = random.choice(MOOD_IDEAS)
+        level = self.parent.get_level()
+        self.ids.progress_label.text = "Searching image for " + mood_str
+        d = {mood_str: mood_str, level: level}
+        ld = LoadingGameData(d)
+        # ld = LoadingGameData(d)
+        ld.bind(on_load_data_complete=self.on_load_data_callback)
+        Clock.schedule_once(ld.trigger_custom_event, d, 3)
+        self.ids.progress_label.text = "Loading image " + mood_str
 
     def switch_to_title_screen(self):
         """Close this widget and open the Title Screen.
@@ -33,43 +47,18 @@ class LoadDataScreen(Screen):
         self.ids.load_progress_bar.value += 1
 
     def update(self, dt):
-        # Stop if this window isn't active.
-        if not self.parent:
-            return
-        # get mood if not there - get a random one
-        try:
-            mood_str = self.manager.screens[0].ids.input.text
-        except:
-            self.logger.error("no mood str")
+        pass
 
-        try:
-            level = self.parent.get_level()
-        except:
-            self.logger.error("where is level")
-        self.ids.load_progress_bar.value = 1
-        Clock.schedule_interval(self.next, 1 / 25)
-        try:
-            self.load_data(mood_str,level)
-        except:
-            pass
-        finally:
-            Clock.schedule_interval(self.next, 1 / 25)
-        self.switch_to_game_screen()
+    def on_load_data_callback(*args):
+        RkLogger.__call__().get_logger().info('my on_custom_event is called with {}'.format(args))
 
-
-    def switch_to_game_screen(self):
+    def switch_to_game_screen(self,ret_object):
         """Close this widget and open the Game Screen.
         """
 
         # Ask the parent to switch to the Game screen
-        self.parent.change_scene("game_screen", None)
+        self.parent.change_scene("game_screen", ret_object)
 
-    def load_data(self, mood_str,level):
-        self.ids.progress_label.text = "Searching image for " + mood_str
-        ld = LoadingData(mood_str,level)
-        self.ids.progress_label.text = "Loading image"
-        ld.retrieve_image_data()
-        image_data = ld.get_image()
-        title, long_title = ld.get_image_info()
-        self.ids.progress_label.text = "Get Ready to solve " + title
-
+    def on_load_data_complete(self, obj):
+        RkLogger.get_logger().info("back from load data")
+        self.switch_to_game_screen(obj)

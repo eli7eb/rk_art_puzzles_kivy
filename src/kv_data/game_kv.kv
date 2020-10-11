@@ -67,6 +67,24 @@
                 text: 'About'
                 background_color: (0, 0, 0, 1) if self.parent.btn_color_3 is None else self.parent.btn_color_3
                 on_release: root.switch_to_game_screen()
+# game screen has three main parts
+# tiles_grid
+# drag_tiles_container
+# dashboard
+
+<GameTilesGrid>
+    bg_color_3: color_3_grey
+    size_hint: (.5,1.)
+    canvas:
+        Color:
+            rgba: (0, 0, 0, 1)  if self.bg_color_3 is None else self.bg_color_3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        size_hint_y: (.3,.5)
+        font_size: 0.3*self.height
+        text: 'game'
 
 <GameScreen>:
     BoxLayout:
@@ -92,22 +110,13 @@
                     pos: self.pos
                     size: self.size
             # adding 2 widgets for game and tiles
-            Widget:
-                bg_color_3: color_3_grey
-                size_hint: (.5,1.)
-                canvas:
-                    Color:
-                        rgba: (0, 0, 0, 1)  if self.bg_color_3 is None else self.bg_color_3
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                Label:
-                    size_hint_y: (.3,.5)
-                    font_size: 0.3*self.height
-                    text: 'game'
+            GameTilesGrid:
+                id:game_tiles_grid
+
             Widget:
                 size_hint: (.1,1.)
                 bg_color_1: color_1_grey
+                id:game_drage_tiles_container
                 canvas:
                     Color:
                         rgba: (0, 0, 0, 1)  if self.bg_color_1 is None else self.bg_color_1
@@ -120,6 +129,7 @@
                     text: 'tiles'
     # creating Canvas for dashboard
         Widget:
+            id:game_dashboard
             size_hint : (1.0, 0.2)
             bg_dashboard_color:color_4_brown
             canvas:

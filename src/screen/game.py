@@ -5,9 +5,20 @@ from kivy.uix.screenmanager import Screen
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
+from src.kivy_game_widgets.kivy_game_dashboard import GameDashboard
+from src.kivy_game_widgets.kivy_tiles_drag_container import GameTilesDragConatiner
+from src.kivy_game_widgets.kivy_tiles_grid import GameTilesGrid
+from kivy.properties import ObjectProperty
+
+grid_tiles = GameTilesGrid()
+drag_tiles = GameTilesDragConatiner()
+dashboard = GameDashboard()
+
+
 class GameScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(**kwargs)
+
 
         Clock.schedule_interval(
             partial(
@@ -16,6 +27,9 @@ class GameScreen(Screen):
             ),
             1.0 / 30.0
         )
+
+
+
 
     def switch_to_title_screen(self):
         """Close this widget and open the Title Screen.
@@ -28,8 +42,10 @@ class GameScreen(Screen):
         # Stop if this window isn't active.
         if not self.parent:
             return
+        grid_tiles.draw_tiles()
+        # self.draw_tiles(dt)
 
-        self.draw_tiles(dt)
+
 
     def draw_tiles(self, dt):
         """

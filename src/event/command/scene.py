@@ -1,5 +1,5 @@
-from event.command.base import Command
-from event.command.base import CommandController
+from src.event.command.base import Command
+from src.event.command.base import CommandController
 
 class SceneChangeCommand(Command):
     """Change the current scene to the given ID.
