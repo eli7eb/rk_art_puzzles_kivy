@@ -40,8 +40,7 @@ def validate_crop_size(image, tile_size):
 
 # from box and image size get the x y coodinates in the grid
 def getXYCoordinatesFromBox(box, tile_size):
-    logger = RkLogger.__call__().get_logger()
-    logger.info("box {}".format(box))
+    log_loading_data_msg("getXYCoordinatesFromBox box {}".format(box),'info')
 
     # find the middle point
     x = box[0] + tile_size / 2
@@ -50,21 +49,44 @@ def getXYCoordinatesFromBox(box, tile_size):
     y_index = int(y / tile_size)
     return y_index, x_index
 
+def log_loading_data_msg(msg,type_msg):
+    logger = RkLogger.__call__().get_logger()
+    if type_msg == 'info':
+        logger.info(msg)
+    elif type_msg == 'err':
+        logger.err(msg)
+    else:
+        logger.err(msg)
+
 
 # TODO add are you sure
 class LoadingGameData(Widget):
     # Dummy screen that just quits the game (after quitting screen has been shown)
-    def __init__(self, d,**kwargs):
+    def __init__(self, ld_params,**kwargs):
         super(LoadingGameData, self).__init__(**kwargs)
-        #self.mood_str = mood_str
-        #self.play_level = level
+        self.mood_str = ld_params['mood_str']
+        self.play_level = ld_params['level']
+        log_loading_data_msg("LoadingGameData box {}".format(self.mood_str), 'info')
         self.register_event_type('on_load_data_complete')
+        self.register_event_type('on_load_status_update')
 
     def trigger_custom_event(self, *args):
+        log_loading_data_msg("trigger_custom_event", 'info')
         self.retrieve_image_data()
-        self.dispatch('on_load_data_complete', 'test message')
 
+    def trigger_load_update_event(self, *args):
+        log_loading_data_msg("trigger_load_update_event", 'info')
+        self.on_load_status_update(0,None)
 
+    def on_load_data_complete(self, *args):
+        log_loading_data_msg("on_load_data_complete", 'info')
+
+    def on_load_status_update(self,*args):
+        if len(args) == 1:
+            self.dispatch('on_load_status_update', str(args[0]))
+        elif args[1] == 0: # first time
+            return;
+        self.dispatch('on_load_status_update', str(args[2]))
     # call the game utils to load the image from list of images returned
     # resize image
     # crop to tiles and resize them
@@ -72,6 +94,7 @@ class LoadingGameData(Widget):
     # TODO when local make sure there is a title
     def getLoadedImage(self):
         remote = False
+        log_loading_data_msg("getLoadedImage start", 'info')
         if remote:
             search_art_obj = SearchArt(self.mood_str)
             # get a list of art works for this mood
@@ -80,13 +103,14 @@ class LoadingGameData(Widget):
             get_art_tiles = GetArtTiles(art_dict)
             self.title = art_dict['title']
             self.long_title = art_dict['longTitle']
+            self.on_load_status_update(self, 1, str("Getting art work {}".format(self.title)))
             # at this stage I need to know the final image size
             art_tiles_obj = get_art_tiles.getArtImage()
             # self.dashboard.set_title_info(art_dict)
             art_image = GetArtImage(art_tiles_obj, SCREEN_WIDTH, SCREEN_HEIGHT)
             pygame_image, pil_image = art_image.getBitmapFromTiles()
             remote_obj = {id:'remote',pygame_image:pygame_image,pil_image:pil_image}
-            self.dispatch('on_load_data_complete', remote_obj)
+            log_loading_data_msg("getLoadedImage end remote ", 'info')
             return pygame_image, pil_image
         else:
             # for local I pick one of three options
@@ -99,6 +123,7 @@ class LoadingGameData(Widget):
             local_pil_image = Image.open(file_path)
 
             self.title = local_art_object['title']
+            self.on_load_status_update(self, 1, str("Getting art work {}".format(self.title)))
             self.long_title = local_art_object['long_title']
             local_pil_image = local_pil_image.convert('RGBA')
             local_pil_image = local_pil_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
@@ -114,12 +139,12 @@ class LoadingGameData(Widget):
             data = local_pil_image.tobytes()
             local_pygame_image = pygame.image.fromstring(data, size, mode)
 
-            remote_obj = {id: 'remote', local_pygame_image: local_pygame_image, local_pil_image: local_pil_image}
-            self.dispatch('on_load_data_complete', remote_obj)
+            remote_obj = {id: 'local', 'local_pygame_image': local_pygame_image, 'local_pil_image': local_pil_image}
+            log_loading_data_msg("getLoadedImage end local ", 'info')
             return local_pygame_image, local_pil_image
 
-    def on_load_data_complete(self, *args):
-        pass
+
+
 
 
     def get_tile_blurred(self, py_image):
@@ -187,6 +212,8 @@ class LoadingGameData(Widget):
     # calculate where I am on the grid by dividing the box to the grid
     # create the tile object with image and image_transparent
     def crop_image_to_array(self, tile_tuple):
+        log_loading_data_msg("crop_image_to_array start", 'info')
+
         im = self.pil_image
         # TODO 4 tiles across depends on level
         width = int(im.width)
@@ -195,7 +222,7 @@ class LoadingGameData(Widget):
 
         num_cols = tile_tuple[1]
         num_rows = tile_tuple[2]
-
+        self.on_load_status_update(self, 1, "Preparing tiles for a {} by {} grid".format(str(num_cols),str(num_rows)))
         tile_matrix = [[1] * num_cols for n in range(num_rows)]
         counter = 0
 
@@ -236,7 +263,7 @@ class LoadingGameData(Widget):
 
                 tile_matrix[coords[0]][coords[1]] = py_tile
                 # img.crop(box).save('zchop.%s.x%03d.y%03d.jpg' % (infile.replace('.jpg', ''), x0, y0))
-
+        log_loading_data_msg("crop_image_to_array end", 'info')
         return tile_matrix
 
     def get_image_grid(self):
@@ -267,13 +294,9 @@ class LoadingGameData(Widget):
         im = im.resize((im_width, im_height), Image.LANCZOS)
         return im
 
-        # get image and tiles grid
-
+    # get image and tiles grid
     def retrieve_image_data(self):
-        if self.mood_str == '':
-            self.mood_str = self.getRandomSearchValue()
-
-
+        log_loading_data_msg("retrieve_image_data start", 'info')
         self.puzzle_image, im = self.getLoadedImage()
         self.pil_image = self.image_resize(im)
         tile_tuple = self.fit_squares()
@@ -293,4 +316,6 @@ class LoadingGameData(Widget):
         # list_to_random = list(range(0, total_size))
         # self.tiles_to_show = random.sample(list_to_random, k=number_tiles_displayed)
         # self.draw_grid()
-
+        # TODO make sure to pack info into dict and send with the dispatch
+        log_loading_data_msg("retrieve_image_data end", 'info')
+        self.dispatch('on_load_data_complete')
