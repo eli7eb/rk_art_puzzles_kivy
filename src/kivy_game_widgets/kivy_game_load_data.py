@@ -62,31 +62,20 @@ def log_loading_data_msg(msg,type_msg):
 # TODO add are you sure
 class LoadingGameData(Widget):
     # Dummy screen that just quits the game (after quitting screen has been shown)
-    def __init__(self, ld_params,**kwargs):
+    def __init__(self, ld_params, **kwargs):
         super(LoadingGameData, self).__init__(**kwargs)
         self.mood_str = ld_params['mood_str']
         self.play_level = ld_params['level']
+        #self.event_object = event_object
         log_loading_data_msg("LoadingGameData box {}".format(self.mood_str), 'info')
         self.register_event_type('on_load_data_complete')
         self.register_event_type('on_load_status_update')
 
-    def trigger_custom_event(self, *args):
-        log_loading_data_msg("trigger_custom_event", 'info')
-        self.retrieve_image_data()
-
-    def trigger_load_update_event(self, *args):
-        log_loading_data_msg("trigger_load_update_event", 'info')
-        self.on_load_status_update(0,None)
 
     def on_load_data_complete(self, *args):
-        log_loading_data_msg("on_load_data_complete", 'info')
-
-    def on_load_status_update(self,*args):
-        if len(args) == 1:
-            self.dispatch('on_load_status_update', str(args[0]))
-        elif args[1] == 0: # first time
-            return;
-        self.dispatch('on_load_status_update', str(args[2]))
+        print("on_update I am dispatched", args)
+    def on_load_status_update(self, *args):
+        print("on_update I am dispatched", args)
     # call the game utils to load the image from list of images returned
     # resize image
     # crop to tiles and resize them
@@ -103,7 +92,8 @@ class LoadingGameData(Widget):
             get_art_tiles = GetArtTiles(art_dict)
             self.title = art_dict['title']
             self.long_title = art_dict['longTitle']
-            self.on_load_status_update(self, 1, str("Getting art work {}".format(self.title)))
+            self.dispatch('on_load_status_update',self.title)
+
             # at this stage I need to know the final image size
             art_tiles_obj = get_art_tiles.getArtImage()
             # self.dashboard.set_title_info(art_dict)
@@ -123,7 +113,7 @@ class LoadingGameData(Widget):
             local_pil_image = Image.open(file_path)
 
             self.title = local_art_object['title']
-            self.on_load_status_update(self, 1, str("Getting art work {}".format(self.title)))
+            self.dispatch('on_load_status_update',self.title)
             self.long_title = local_art_object['long_title']
             local_pil_image = local_pil_image.convert('RGBA')
             local_pil_image = local_pil_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
@@ -222,7 +212,8 @@ class LoadingGameData(Widget):
 
         num_cols = tile_tuple[1]
         num_rows = tile_tuple[2]
-        self.on_load_status_update(self, 1, "Preparing tiles for a {} by {} grid".format(str(num_cols),str(num_rows)))
+        self.dispatch('on_load_status_update', "Preparing tiles for a {} by {} grid".format(str(num_cols),str(num_rows)))
+
         tile_matrix = [[1] * num_cols for n in range(num_rows)]
         counter = 0
 

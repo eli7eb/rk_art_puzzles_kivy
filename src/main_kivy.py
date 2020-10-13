@@ -80,16 +80,18 @@ class TitleScreen(Screen):
         super().__init__(**kwargs)
 
     def process_text(self):
-        logger = RkLogger.__call__().get_logger()
-        logger.info("mood_str " + self.ids.input.text)
+
+
         self.switch_to_load_data_screen()
 
-    def switch_to_load_data_screen(self):
+    def switch_to_load_data_screen(self,**args):
         """Close this widget and open the Game Screen.
         """
-
+        mood_str = self.ids.input.text
+        logger = RkLogger.__call__().get_logger()
+        logger.info("mood_str " + self.ids.input.text)
         # Ask the parent to switch to the Game screen
-        self.parent.change_scene("load_data_screen")
+        self.parent.change_scene("load_data_screen",{'mood':mood_str})
 
     def switch_to_game_screen(self):
         """Close this widget and open the Game Screen.

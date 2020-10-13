@@ -1,9 +1,9 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from event.command.base import Command
-from event.command.base import CommandController
-from event.command.base import UnknownCommandException
+from src.event.command.base import Command
+from src.event.command.base import CommandController
+from src.event.command.base import UnknownCommandException
 
 class StringActor(object):
     """The object the Commands should act upon.
