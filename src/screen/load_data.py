@@ -37,7 +37,7 @@ class LoadDataScreen(Screen):
     def rk_callback(self, *args):
         logger = RkLogger.__call__().get_logger()
         logger.info("rk_callback ")
-
+        self.parent.change_scene("game_screen", args)
         # TODO self.ev.cancel()
 
     def rk_update_callback(value, *args):

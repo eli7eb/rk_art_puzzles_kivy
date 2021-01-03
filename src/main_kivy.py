@@ -18,11 +18,11 @@ from src.settings.kivy import KivySettings
 from src.event.command.scene import SceneChangeCommand
 from src.event.command.scene import SceneChangeController
 
-from src.screen.game import GameScreen
+from src.screen.game_screen import GameScreen
 from src.game_consts.game_constants import *
 from src.screen.load_data import LoadDataScreen
 from src.game_utils.game_logger import RkLogger
-from src.kivy_game_widgets.kivy_tiles_grid import GameTilesGrid
+
 
 
 play_level = None
@@ -80,8 +80,6 @@ class TitleScreen(Screen):
         super().__init__(**kwargs)
 
     def process_text(self):
-
-
         self.switch_to_load_data_screen()
 
     def switch_to_load_data_screen(self,**args):
@@ -93,12 +91,12 @@ class TitleScreen(Screen):
         # Ask the parent to switch to the Game screen
         self.parent.change_scene("load_data_screen",{'mood':mood_str})
 
-    def switch_to_game_screen(self):
+    def switch_to_game_screen(self,**args):
         """Close this widget and open the Game Screen.
         """
 
         # Ask the parent to switch to the Game screen
-        self.parent.change_scene("game_screen",None)
+        self.parent.change_scene("game_screen",args)
 
 
 class MainKivyRKrApp(App):

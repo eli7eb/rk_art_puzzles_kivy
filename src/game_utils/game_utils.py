@@ -5,6 +5,7 @@ import math
 from PIL import Image
 
 from src.game_consts.game_constants import *
+from src.game_utils.game_logger import RkLogger
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -17,10 +18,27 @@ SCREEN_SPACER_SIZE = 5
 # horizntally 3 top between grid and dashboard and bottom
 SCREEN_SPACER_NUMBER_VER = 3
 SCREEN_SPACER_NUMBER_HOR = 3
+class GameUtilsSingletonMeta(type):
+    """
+    The Singleton class can be implemented in different ways in Python. Some
+    possible methods include: base class, decorator, metaclass. We will use the
+    metaclass because it is best suited for this purpose.
+    """
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
 
 
-
-class GameUtils:
+class GameUtils(metaclass=GameUtilsSingletonMeta):
 
     def __init__(self,  level):
         self.done = False
@@ -42,28 +60,41 @@ class GameUtils:
 
         return cropped
 
+    def generate_random_color(self):
+        start = 0
+        stop = 255
+
+        red = random.randint(start, stop)
+        green = random.randint(start, stop)
+        blue = random.randint(start, stop)
+        return pygame.Color(red, green, blue)
+
     def getRandomSearchValue(self):
         return random.choice(MOOD_IDEAS)
 
     def fit_squares(self):
-        print()
-        im_pth = "mailkmaid.png"
-        # img = Image.open("milkmaid.png")
-        im = Image.open(im_pth)
-        n = 12
-
-        im = im.resize((SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+        logger = RkLogger.__call__().get_logger()
+        logger.info("fit_squares")
+        im = self.pil_image
+        num_tiles = self.level['num_tiles']
         width = im.width
         height = im.height
-        px = math.ceil(math.sqrt(n * width / height))
-        if math.floor(px * height / width) * px < n:
-            sx = height / math.ceil(px * y / x)
+
+        px = math.ceil(math.sqrt(num_tiles * width / height))
+        if math.floor(px * height / width) * px < num_tiles:
+            sx = height / math.ceil(px * height / width)
         else:
             sx = width / px
-        py = math.ceil(math.sqrt(n * height / width))
-        if math.floor(py * width / height) * py < n:
+        py = math.ceil(math.sqrt(num_tiles * height / width))
+        if math.floor(py * width / height) * py < num_tiles:
             sy = width / math.ceil((width * py / height))
         else:
             sy = height / py
-        return math.max(sx, sy)
+        # TODO get the number of cols and rows by deviding the width/size and height/size
+        # return all as tuple
+        size = int(max(sx, sy))
+        num_cols = int(width / size)
+        num_rows = int(height / size)
+        return size, num_cols, num_rows
+
 

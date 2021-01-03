@@ -29,7 +29,8 @@ class GameScreen(Screen):
         )
 
 
-
+    def on_enter(self, *args):
+        pass
 
     def switch_to_title_screen(self):
         """Close this widget and open the Title Screen.
@@ -38,7 +39,7 @@ class GameScreen(Screen):
         # Ask the parent to switch to the Game screen
         self.parent.change_scene("title_screen")
 
-    def update(self, dt):
+    def update(self, *args):
         # Stop if this window isn't active.
         if not self.parent:
             return
