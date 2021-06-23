@@ -45,7 +45,7 @@ class View:
 
 
 class TextView(View):
-    # Displays a text on screen
+    # Displays a text on game_screens
     #
     # Shows text for 2 seconds then proceed to next view
     firstRender = True
@@ -143,7 +143,7 @@ class MenuView(View):
 
 
 class QuitView(View):
-    # Dummy screen that just quits the game (after quitting screen has been shown)
+    # Dummy game_screens that just quits the game (after quitting game_screens has been shown)
     def __init__(self, screen):
         View.__init__(self, screen)
 
@@ -164,9 +164,9 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 views = { \
     VIEW_STATE_SPLASH: TextView(screen, "Nonexistant games presents", VIEW_STATE_MENU),
     VIEW_STATE_MENU: MenuView(screen),
-    VIEW_STATE_GAME_A: TextView(screen, "Game A screen...", VIEW_STATE_MENU),
-    VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU),
-    VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU),
+    VIEW_STATE_GAME_A: TextView(screen, "Game A game_screens...", VIEW_STATE_MENU),
+    VIEW_STATE_GAME_B: TextView(screen, "Game B game_screens...", VIEW_STATE_MENU),
+    VIEW_STATE_OPTIONS: TextView(screen, "Game options game_screens", VIEW_STATE_MENU),
     VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT),
     VIEW_STATE_QUIT: QuitView(screen)
 }

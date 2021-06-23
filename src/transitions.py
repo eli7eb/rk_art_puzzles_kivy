@@ -46,7 +46,7 @@ class View:
 
 
 class TextView(View):
-    # Displays a text on screen
+    # Displays a text on game_screens
     #
     # Shows text for 2 seconds then proceed to next view
     firstRender = True
@@ -127,7 +127,7 @@ class MenuView(View):
             textY = self.centerY - 50 + (40 * index)
             if self.selectedItem == index:
                 textSurface = menuSelectedFont.render(menuItemText, True, TEXT_COLOR)
-                # pygame.draw.circle(self.screen, TEXT_COLOR, textX - 15, textY + 15, 5)
+                # pygame.draw.circle(self.game_screens, TEXT_COLOR, textX - 15, textY + 15, 5)
             else:
                 textSurface = menuFont.render(menuItemText, True, TEXT_COLOR)
             self.screen.blit(textSurface, [textX, textY])
@@ -144,7 +144,7 @@ class MenuView(View):
 
 
 class QuitView(View):
-    # Dummy screen that just quits the game (after quitting screen has been shown)
+    # Dummy game_screens that just quits the game (after quitting game_screens has been shown)
     def __init__(self, screen):
         View.__init__(self, screen)
 
@@ -163,11 +163,11 @@ menuSelectedFont = pygame.font.SysFont("comicsansmsttf", 30, True)
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
 views = { \
-    VIEW_STATE_SPLASH: TextView(screen, "Splash screen", VIEW_STATE_MENU),
+    VIEW_STATE_SPLASH: TextView(screen, "Splash game_screens", VIEW_STATE_MENU),
     VIEW_STATE_MENU: MenuView(screen),
-    VIEW_STATE_GAME_A: TextView(screen, "Game A screen...", VIEW_STATE_MENU),
-    VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU),
-    VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU),
+    VIEW_STATE_GAME_A: TextView(screen, "Game A game_screens...", VIEW_STATE_MENU),
+    VIEW_STATE_GAME_B: TextView(screen, "Game B game_screens...", VIEW_STATE_MENU),
+    VIEW_STATE_OPTIONS: TextView(screen, "Game options game_screens", VIEW_STATE_MENU),
     VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT),
     VIEW_STATE_QUIT: QuitView(screen)
 }

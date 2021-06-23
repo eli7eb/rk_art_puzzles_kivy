@@ -308,7 +308,7 @@ def display_tiles():
     print('display_tiles')
     for row in matrix:
         for col in row:
-            # row_index is screen spacer and tile size times row
+            # row_index is game_screens spacer and tile size times row
             #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
             #                                                 str(col.coords[1])))
 
@@ -357,7 +357,7 @@ def return_tile_at_pos(pos):
     print('display_tile')
     for row in matrix:
         for col in row:
-            # row_index is screen spacer and tile size times row
+            # row_index is game_screens spacer and tile size times row
             # print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
             #                                                 str(col.coords[1])))
 

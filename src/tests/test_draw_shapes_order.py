@@ -3,10 +3,10 @@ import pygame
 
 pygame.init()
 
-# Size of the screen
+# Size of the game_screens
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-# Size of the screen
+# Size of the game_screens
 SCREEN_TITLE = 'Crossy RPG'
 # Colors according to RGB codes
 WHITE_COLOR = (255, 255, 255)

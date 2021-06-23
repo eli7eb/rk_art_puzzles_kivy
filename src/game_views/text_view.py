@@ -8,7 +8,7 @@ HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
 
 class TextView(View):
-    # Displays a text on screen
+    # Displays a text on game_screens
     #
     # Shows text for 2 seconds then proceed to next view
     firstRender = True

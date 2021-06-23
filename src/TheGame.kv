@@ -1,0 +1,36 @@
+#:import navigation_screen_manager navigation_screen_manager
+#:import boxlayout_with_action_bar boxlayout_with_action_bar
+
+
+<MainMenu@BoxLayout>:
+    orientation: "vertical"
+    Button:
+        text: "play"
+        on_press: app.manager.push("Play")
+    Button:
+        text: "options"
+        on_press: app.manager.push("Options")
+    Button:
+        text: "about"
+        on_press: app.manager.push("About")
+
+
+<MainScreenManager>:
+    Screen:
+        name: "MainMenu"
+        MainMenu:
+    Screen:
+        name: "Play"
+        BoxLayoutWithActionBar:
+            title: "Play"
+            PlayScreen:
+    Screen:
+        name: "Options"
+        BoxLayoutWithActionBar:
+            title: "Options"
+            OptionsScreen:
+    Screen:
+        name: "About"
+        BoxLayoutWithActionBar:
+            title: "About"
+            AboutScreen:

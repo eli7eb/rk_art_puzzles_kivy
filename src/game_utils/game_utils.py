@@ -13,7 +13,7 @@ HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2
 HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2
 TEXT_COLOR = pygame.Color(255, 255, 255)
 SCREEN_SPACER_SIZE = 5
-# how many spacers vertical and horizontal for the three main containers in the screen
+# how many spacers vertical and horizontal for the three main containers in the game_screens
 # vertically 3 left. between grid and drag tiles and right
 # horizntally 3 top between grid and dashboard and bottom
 SCREEN_SPACER_NUMBER_VER = 3
@@ -44,7 +44,7 @@ class GameUtils(metaclass=GameUtilsSingletonMeta):
         self.done = False
         self.image = None
         self.level = level
-        # tile needs to 4/6 fit horizontally in the screen by level and one spare for the drag tiles scroller
+        # tile needs to 4/6 fit horizontally in the game_screens by level and one spare for the drag tiles scroller
         # vertically is 4/5 as we need space for the dashboard
         # at least 5 tiles across: 4 grid and one to drag
 

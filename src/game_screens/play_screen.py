@@ -36,7 +36,7 @@ class GameScreen(Screen):
         """Close this widget and open the Title Screen.
         """
 
-        # Ask the parent to switch to the Game screen
+        # Ask the parent to switch to the Game game_screens
         self.parent.change_scene("title_screen")
 
     def update(self, *args):
@@ -44,7 +44,7 @@ class GameScreen(Screen):
         if not self.parent:
             return
         grid_tiles.draw_tiles()
-        # self.draw_tiles(dt)
+        #self.draw_tiles(dt)
 
 
 

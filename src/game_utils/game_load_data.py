@@ -53,7 +53,7 @@ def getXYCoordinatesFromBox(box, tile_size):
 
 # TODO add are you sure
 class LoadingData():
-    # Dummy screen that just quits the game (after quitting screen has been shown)
+    # Dummy game_screens that just quits the game (after quitting game_screens has been shown)
     def __init__(self, mood_str,level):
         self.mood_str = mood_str
         self.play_level = level

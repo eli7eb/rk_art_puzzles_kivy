@@ -61,7 +61,7 @@ def log_loading_data_msg(msg,type_msg):
 
 # TODO add are you sure
 class LoadingGameData(Widget):
-    # Dummy screen that just quits the game (after quitting screen has been shown)
+    # Dummy game_screens that just quits the game (after quitting game_screens has been shown)
     def __init__(self, ld_params, **kwargs):
         super(LoadingGameData, self).__init__(**kwargs)
         self.mood_str = ld_params['mood_str']

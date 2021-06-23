@@ -52,8 +52,8 @@ views = { \
     VIEW_STATE_MENU: MenuView(screen,BACKGROUND_COLOR),
     VIEW_STATE_LOADING: LoadingView(screen, BACKGROUND_COLOR_LOADING, "intermid"),
     VIEW_STATE_GAME_A: GameView(screen, level),
-    VIEW_STATE_GAME_B: TextView(screen, "Game B screen...", VIEW_STATE_MENU,BACKGROUND_COLOR),
-    VIEW_STATE_OPTIONS: TextView(screen, "Game options screen", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_GAME_B: TextView(screen, "Game B game_screens...", VIEW_STATE_MENU,BACKGROUND_COLOR),
+    VIEW_STATE_OPTIONS: TextView(screen, "Game options game_screens", VIEW_STATE_MENU,BACKGROUND_COLOR),
     VIEW_STATE_QUITTING: TextView(screen, "Bye bye!", VIEW_STATE_QUIT,BACKGROUND_COLOR),
     VIEW_STATE_QUIT: QuitView(screen,BACKGROUND_COLOR)
 }

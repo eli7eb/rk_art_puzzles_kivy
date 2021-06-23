@@ -51,7 +51,7 @@ def getXYCoordinatesFromBox(box, tile_size):
 
 # TODO add are you sure
 class LoadingView(View):
-    # Dummy screen that just quits the game (after quitting screen has been shown)
+    # Dummy game_screens that just quits the game (after quitting game_screens has been shown)
     def __init__(self, screen,bg_color,level_name):
         View.__init__(self, screen,bg_color)
         self.level_name = level_name

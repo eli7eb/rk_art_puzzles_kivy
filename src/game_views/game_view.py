@@ -1,7 +1,7 @@
 # play window
-# draw screen
+# draw game_screens
 # grid
-# buttom screen with place holders for current tiles
+# buttom game_screens with place holders for current tiles
 # main menu
 # get user mood or not
 # return will lead to load image interstate menu
@@ -185,7 +185,7 @@ class GameView(View):
 
         for row in self.tiles_grid:
             for col in row:
-                # row_index is screen spacer and tile size times row
+                # row_index is game_screens spacer and tile size times row
                 #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
                 #                                                 str(col.coords[1])))
 
@@ -205,7 +205,7 @@ class GameView(View):
                 pygame.draw.rect(self.screen, (255, 255, 255, 127), rect, 1)
 
 
-                # self.screen.blit(display_tile, (y, x))
+                # self.game_screens.blit(display_tile, (y, x))
                 # self.tiles_grid[col.y_index][col.x_index] = tile
                 y_counter += 1
                 if y_counter > self.num_cols - 1:
@@ -227,7 +227,7 @@ class GameView(View):
 
         for row in self.tiles_grid:
             for col in row:
-                # row_index is screen spacer and tile size times row
+                # row_index is game_screens spacer and tile size times row
                 #print('counter {} coords[0] {} coords[1] {}'.format(str(counter), str(col.coords[0]),
                 #                                                 str(col.coords[1])))
 
@@ -313,7 +313,7 @@ class GameView(View):
     def render(self):
         if self.level.id < LEVEL_MASTER:
             self.display_tiles()
-            #self.screen.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
+            #self.game_screens.blit(self.puzzle_image, (self.top_drag_grid_x, self.top_drag_grid_y))
         else:
             #self.display_test_tiles()
             self.display_tiles()

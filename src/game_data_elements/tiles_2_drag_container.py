@@ -50,5 +50,5 @@ class DragContainer:
             self.screen.blit(tile.image, rect)
             pygame.draw.rect(self.screen, (255, 255, 255, 127), rect, 1)
             #display_tile = tile.image
-            #self.screen.blit(display_tile, (x, y))
+            #self.game_screens.blit(display_tile, (x, y))
             y += tile.size + self.spacer_size

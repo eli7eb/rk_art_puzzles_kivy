@@ -54,7 +54,7 @@ class LoadDataScreen(Screen):
         """Close this widget and open the Title Screen.
         """
 
-        # Ask the parent to switch to the Game screen
+        # Ask the parent to switch to the Game game_screens
         self.parent.change_scene("title_screen",None)
 
     def next(self, dt):
@@ -78,6 +78,6 @@ class LoadDataScreen(Screen):
         """Close this widget and open the Game Screen.
         """
 
-        # Ask the parent to switch to the Game screen
+        # Ask the parent to switch to the Game game_screens
         self.parent.change_scene("game_screen", ret_object)
 
