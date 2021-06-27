@@ -1,9 +1,20 @@
 
 
-<TileButton@ToggleButton>:
+<TileButton@Button>:
 
 <RKPuzzleWidget>:
+    orientation: 'vertical'
     TileButton:
+        text: "options"
+        background_color: 1., 0.5, 0.6, 1
+
+        # Giving size hint i.e size of button is
+        # 30 % by hight and width of layout .
+        size_hint: 0.3, 0.3
+
+        # positioned at 0 % right and 100 % up / top
+        # from bottom left, i.e x, top = 0, 100 from bottom left:
+        pos_hint: {"x":0, "top":1}
     TileButton:
     TileButton:
     TileButton:
