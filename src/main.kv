@@ -1,0 +1,51 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManagement:
+    transition:FadeTransition()
+    MainScreen:
+    OptionsScreen:
+    GameScreen:
+
+<MainScreen>:
+    name:"main"
+    size_hint: None, None
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 100
+
+        TextInput:
+            id: mood_name
+            hint_text:"mood to play"
+            size_hint: None, None
+            size: 200, 50
+
+        Button:
+            on_release:app.root.current = "game"
+            text:"game"
+            font_size:30
+            size_hint: None, None
+            size: 200, 50
+
+        Button:
+            on_release:app.root.current = "options"
+            text:"Options"
+            font_size:30
+            size_hint: None, None
+            size: 200, 50
+
+
+
+<OptionsScreen>:
+    name:"options"
+    Button:
+        on_release:app.root.current = "main"
+        text:"main"
+        font_size:50
+
+<GameScreen>:
+    name:"game"
+    Button:
+        on_release:app.root.current = "main"
+        text:"main"
+        font_size:50
