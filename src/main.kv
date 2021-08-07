@@ -8,40 +8,41 @@ ScreenManagement:
 
 <MainScreen>:
     name:"main"
-    size_hint: None, None
 
     BoxLayout:
         orientation: 'vertical'
-        padding: 100
+        padding:200
+        spacing:30
 
         TextInput:
             id: mood_name
             hint_text:"mood to play"
-            size_hint: None, None
-            size: 200, 50
+
 
         Button:
             on_release:app.root.current = "game"
             text:"game"
             font_size:30
-            size_hint: None, None
-            size: 200, 50
 
         Button:
             on_release:app.root.current = "options"
             text:"Options"
             font_size:30
-            size_hint: None, None
-            size: 200, 50
 
 
 
 <OptionsScreen>:
     name:"options"
     Button:
+        pos_hint:"top":0
         on_release:app.root.current = "main"
         text:"main"
         font_size:50
+        size_hint: 0.3, 0.3
+
+        # positioned at 0 % right and 100 % up / top
+        # from bottom left, i.e x, top = 0, 100 from bottom left:
+        pos_hint: {"x":0, "top":1}
 
 <GameScreen>:
     name:"game"
@@ -49,3 +50,8 @@ ScreenManagement:
         on_release:app.root.current = "main"
         text:"main"
         font_size:50
+        size_hint: 0.3, 0.3
+
+        # positioned at 0 % right and 100 % up / top
+        # from bottom left, i.e x, top = 0, 100 from bottom left:
+        pos_hint: {"x":0, "top":1}
