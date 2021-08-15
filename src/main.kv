@@ -16,8 +16,11 @@ ScreenManagement:
 
         TextInput:
             id: mood_name
+            multiline:False
             hint_text:"mood to play"
-
+            id: mood_input
+            on_text: app.process()
+            on_text_validate:app.on_text_validate()
 
         Button:
             on_release:app.root.current = "game"
@@ -30,28 +33,18 @@ ScreenManagement:
             font_size:30
 
 
+<NavButton@Button>
+    size_hint: None, None
+    size: 100, 50
+    pos_hint: {'right': 1, 'top': 1}
+    on_release:app.root.current = "main"
+    text:"main"
+    font_size:20
 
 <OptionsScreen>:
     name:"options"
-    Button:
-        pos_hint:"top":0
-        on_release:app.root.current = "main"
-        text:"main"
-        font_size:50
-        size_hint: 0.3, 0.3
-
-        # positioned at 0 % right and 100 % up / top
-        # from bottom left, i.e x, top = 0, 100 from bottom left:
-        pos_hint: {"x":0, "top":1}
+    NavButton
 
 <GameScreen>:
     name:"game"
-    Button:
-        on_release:app.root.current = "main"
-        text:"main"
-        font_size:50
-        size_hint: 0.3, 0.3
-
-        # positioned at 0 % right and 100 % up / top
-        # from bottom left, i.e x, top = 0, 100 from bottom left:
-        pos_hint: {"x":0, "top":1}
+    NavButton

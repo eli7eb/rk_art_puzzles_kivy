@@ -14,9 +14,6 @@ kivy.require("1.10.1")  # make sure people running py file have right version
 class MainScreen(Screen):
     pass
 
-class MainScreen(Screen):
-    pass
-
 class OptionsScreen(Screen):
     pass
 
@@ -27,11 +24,21 @@ class ScreenManagement(ScreenManager):
     pass
 
 main_kv = Builder.load_file("main.kv")
+
+
 class MainApp(App):
     # This is your "initialize" for the root wiget
     def build(self):
         # Creates that label which will just hold text.
         return main_kv
+
+    def process(self):
+        text = self.root.ids.mood_name.text
+        print("process "+text)
+
+    def on_text_validate(self):
+        text = self.root.ids.mood_name.text
+        print("on_enter" + text)
 
 
 # Run the app.
